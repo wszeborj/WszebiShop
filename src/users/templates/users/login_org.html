@@ -1,0 +1,43 @@
+{% extends 'shop/sidebar.html' %}
+{% load static %}
+{% block content_main %}
+
+
+<div class="span9">
+    <ul class="breadcrumb">
+		<li><a href="index.html">Home</a> <span class="divider">/</span></li>
+		<li class="active">Login</li>
+    </ul>
+	<h3> Login</h3>
+	<hr class="soft">
+
+	<div class="row">
+
+		<div class="span4">
+			<div class="well">
+			<form>
+			  <div class="control-group">
+				<label class="control-label" for="email">Email</label>
+				<div class="controls">
+				  <input class="span3" type="text" id="email" placeholder="Email">
+				</div>
+			  </div>
+			  <div class="control-group">
+				<label class="control-label" for="password">Password</label>
+				<div class="controls">
+				  <input type="password" class="span3" id="password" placeholder="Password">
+				</div>
+			  </div>
+			  <div class="control-group">
+				<div class="controls">
+				  <button type="submit" class="btn">Sign in</button> <a href="forgetpass.html">Forget password?</a>
+				</div>
+			  </div>
+			</form>
+		</div>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
