@@ -45,6 +45,7 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=6)
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class ShoppingCart(models.Model):

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm
+from .forms import UserRegisterForm, UserRegisterForm2, ProfileUpdateForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
 from shop.models import Address
 from django.views import View
@@ -10,22 +10,24 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Register(View):
 
     def get(self, request):
-        form = UserRegisterForm()
-        return render(request, 'users/register.html', {'form': form})
+        form1 = UserRegisterForm()
+        form2 = UserRegisterForm2()
+        return render(request, 'users/register.html', {"form1": form1, "form2": form2})
 
     def post(self, request):
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            account = form.save()
-            username = form.cleaned_data.get("username")
-            first_name2 = form.cleaned_data.get("first_name2")
-            last_name2 = form.cleaned_data.get("last_name2")
-            street = form.cleaned_data.get("street")
-            city = form.cleaned_data.get("city")
-            state = form.cleaned_data.get('state')
-            zip_code = form.cleaned_data.get("zip_code")
-            country = form.cleaned_data.get("country")
-            phone = form.cleaned_data.get("phone")
+        form1 = UserRegisterForm(request.POST)
+        form2 = UserRegisterForm2(request.POST)
+        if form1.is_valid() and form2.is_valid():
+            account = form1.save()
+            first_name2 = form2.cleaned_data.get("first_name2")
+            last_name2 = form2.cleaned_data.get("last_name2")
+            birth_date = form2.cleaned_data.get("birth_date")
+            street = form2.cleaned_data.get("street")
+            city = form2.cleaned_data.get("city")
+            state = form2.cleaned_data.get('state')
+            zip_code = form2.cleaned_data.get("zip_code")
+            country = form2.cleaned_data.get("country")
+            phone = form2.cleaned_data.get("phone")
 
             new_address = Address.objects.create(
                     account=account,
@@ -39,14 +41,16 @@ class Register(View):
                     country=country
             )
 
-            messages.success(request, f"Dear {username}, you have been successfully signed up!")
+            messages.success(request, f"Dear {account.username}, you have been successfully signed up!")
             return redirect("login")
-        elif not form.is_valid():
-            print(form.errors)
+        elif not form1.is_valid() or not form2.is_valid():
+            print(form1.errors)
+            print(form2.errors)
         else:
-            form = UserRegisterForm()
+            form1 = UserRegisterForm()
+            form2 = UserRegisterForm2()
 
-        return render(request, "users/register.html", {"form": form})
+        return render(request, "users/register.html", {"form1": form1, "form2": form2})
 
 
 @login_required

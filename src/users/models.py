@@ -10,7 +10,6 @@ class Account(AbstractUser):
         BLOCKED = 'BLOCKED', 'BLOCKED'
         BANNED = 'BANNED', 'BANNED'
         REMOVED = 'REMOVED', 'REMOVED'
-
     phone = PhoneNumberField()
     birth_date = models.DateField()
     status = models.TextField(choices=State.choices)
