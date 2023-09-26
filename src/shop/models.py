@@ -47,10 +47,16 @@ class Address(models.Model):
     country = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'({self.id}) assigned to: {self.account}'
+
 
 class ShoppingCart(models.Model):
     product_list = models.ManyToManyField(Product, null=True, blank=True)
     customer = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'({self.id}) assigned to: {self.customer}'
 
 
 class Payment(models.Model):
