@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm, UserRegisterForm2, ProfileUpdateForm, UserUpdateForm
+from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
 from shop.models import Address
 from django.views import View
@@ -11,46 +11,24 @@ class Register(View):
 
     def get(self, request):
         form1 = UserRegisterForm()
-        form2 = UserRegisterForm2()
-        return render(request, 'users/register.html', {"form1": form1, "form2": form2})
+        return render(request, 'users/register.html', {"form1": form1})
 
     def post(self, request):
         form1 = UserRegisterForm(request.POST)
-        form2 = UserRegisterForm2(request.POST)
-        if form1.is_valid() and form2.is_valid():
-            account = form1.save()
-            first_name2 = form2.cleaned_data.get("first_name2")
-            last_name2 = form2.cleaned_data.get("last_name2")
-            birth_date = form2.cleaned_data.get("birth_date")
-            street = form2.cleaned_data.get("street")
-            city = form2.cleaned_data.get("city")
-            state = form2.cleaned_data.get('state')
-            zip_code = form2.cleaned_data.get("zip_code")
-            country = form2.cleaned_data.get("country")
-            phone = form2.cleaned_data.get("phone")
 
-            new_address = Address.objects.create(
-                    account=account,
-                    first_name=first_name2,
-                    last_name=last_name2,
-                    street=street,
-                    phone=phone,
-                    state=state,
-                    city=city,
-                    postal_code=zip_code,
-                    country=country
-            )
+        if form1.is_valid():
+            account = form1.save()
+            birth_date = form1.cleaned_data.get("birth_date")
+            phone = form1.cleaned_data.get("phone")
 
             messages.success(request, f"Dear {account.username}, you have been successfully signed up!")
             return redirect("login")
-        elif not form1.is_valid() or not form2.is_valid():
+        elif not form1.is_valid():
             print(form1.errors)
-            print(form2.errors)
         else:
             form1 = UserRegisterForm()
-            form2 = UserRegisterForm2()
 
-        return render(request, "users/register.html", {"form1": form1, "form2": form2})
+        return render(request, "users/register.html", {"form1": form1})
 
 
 @login_required

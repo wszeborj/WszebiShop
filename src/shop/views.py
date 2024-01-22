@@ -1,38 +1,47 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import Product, Image
+from .models import Product, Image, Category
+from django.views.generic import DetailView
 
 
-class ProductListView(View):
-    template_name = 'shop/index.html'
+class CategoryListView(View):
+    model = Category
+    template_name = 'sidebar.html'
+    context_object_name = 'categories'
+    
+    def get_queryset(self):
+        return Category.objects.filter(parent__isnull=True)
+
+
+class AllProductListView(View): #listview
+    template_name = 'shop/home.html'
 
     def get(self, request):
-        featured_products = Product.objects.all()
+        latest_products = Product.objects.order_by('-created_at')[:3]
+        # featured_products = Product.objects.all()
 
-        for product in featured_products:
+        for product in latest_products:
             product.first_image = product.images.first().image if product.images.exists() else None
 
-        latest_products = Product.objects.order_by('-date')[:6]
-
         context = {
-            'featured_products': featured_products,
-            'latest_products': latest_products,
+            'products': latest_products,
         }
 
         return render(request, self.template_name, context)
+
 
 class ProductDetailsView(View):
     template_name = 'shop/product_details.html'
 
-    def get(self, request, product_id):
+    def get(self, request, pk):
 
-        product = Product.objects.get(pk=product_id)
-        images = Image.objects.filter(product=product)
+        product_details = get_object_or_404(Product, pk=pk)
+        images = product_details.images.all()
 
         context = {
-            'product': product,
+            'product_details': product_details,
             'images': images,
+
         }
 
         return render(request, self.template_name, context)
-

@@ -17,5 +17,5 @@ class Command(BaseCommand):
 
         user = User.objects.create_superuser(username=username, email=email, password=password, phone='123456789',
                                              birth_date=datetime.fromisoformat('1990-12-04'),
-                                             state='ACTIVE')
+                                             status='ACTIVE')
         self.stdout.write(self.style.SUCCESS(f'Superuser "{user} created successfully.'))

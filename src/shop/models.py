@@ -1,6 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from users.models import Account
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -11,28 +12,44 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = 'categories'
+
+    def get_absolute_url(self):
+        return reverse('category_list', args=[self.parent])
+
 
 class Product(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
-    category_id = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
     unit = models.CharField(max_length=10)
     unit_price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
     quantity_in_stock = models.IntegerField()
     sold = models.IntegerField()
-    date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     special_offer = models.BooleanField()
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.name} ({self.id})'
 
+    class Meta:
+        verbose_name_plural = 'Products'
+        ordering = ('-created_at',)
+
+    def get_absolute_url(self):
+        return reverse('shop:product_details', args=[str(self.pk)])
+
 
 class Image(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='media\\product_images')
+    image = models.ImageField(upload_to='media/product_images')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'({self.id}) {self.image} assigned to: {self.product}'
+        return f'({self.id}) {self.image} created at: {self.created_at}'
 
 
 class Address(models.Model):
