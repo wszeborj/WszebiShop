@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Product, Category, Image, Address
+from .models import Product, Category, Image
+    #, Address
 
 
 class ProductImagesInline(admin.StackedInline):
@@ -15,20 +16,22 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category_id', 'unit', 'unit_price', 'quantity_in_stock', 'sold', 'created_at',
+    list_display = ['name', 'category_id', 'unit', 'unit_price', 'in_stock', 'sold', 'created_at',
                     'updated_at', 'special_offer']
-    list_filter = ['category_id', 'quantity_in_stock', 'is_active']
-    list_editable = ['unit_price', 'quantity_in_stock']
+    list_filter = ['category_id', 'in_stock', 'is_active']
+    list_editable = ['unit_price', 'in_stock']
     inlines = [ProductImagesInline]
 
 
-# @admin.register(Image)
-# class ImageAdmin(admin.ModelAdmin):
-#     list_display = ['image', 'created_at',]
-#     list_filter = ['created_at',]
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ['image', 'created_at',]
+    list_filter = ['created_at',]
+
+#
+# @admin.register(Address)
+# class AddressAdmin(admin.ModelAdmin):
+#     list_display = ['account', 'country', 'state', 'city', 'street',]
+#     list_filter = ['country', 'state', 'city', 'street',]
 
 
-@admin.register(Address)
-class AddressAdmin(admin.ModelAdmin):
-    list_display = ['account', 'country', 'state', 'city', 'street',]
-    list_filter = ['country', 'state', 'city', 'street',]

@@ -11,7 +11,8 @@ class AllProductListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         for product in queryset:
-            product.first_image = product.images.first().image if product.images.exists() else None
+            if product.images.exists():
+                product.first_image = product.images.first().image
         return queryset
 
 

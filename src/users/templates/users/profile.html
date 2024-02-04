@@ -8,7 +8,7 @@
         <h2 class="text-center mb-4">Profile info</h2>
         <form method="post">
             {% csrf_token %}
-            {{ ProfileUpdate | crispy }}
+            {{ form | crispy }}
             <button type="submit">Update</button>
         </form>
     </div>

@@ -37,7 +37,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class RegisterFormView(FormView):
     template_name = "users/register.html"
     form_class = UserRegisterForm
-    success_url = "/login/"
+    success_url = reverse_lazy("/login/")
 
     def form_vaild(self, form):
         account = form.save()
@@ -71,15 +71,9 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "users/profile.html"
     form_class = ProfileUpdateForm
     success_url = reverse_lazy('profile')
-    context_object_name = 'ProfileUpdate'
 
     def get_object(self, queryset=None):
         return self.request.user
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ProfileUpdate'] = self.get_form()
-        return context
 
     def form_valid(self, form):
         messages.success(self.request, 'Your profile has been updated!')

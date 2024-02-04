@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "bootstrap_datepicker_plus",
 ]
 
-INSTALLED_EXTENSIONS = ['shop', 'users']
+INSTALLED_EXTENSIONS = ['shop', 'users', 'carts']
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
