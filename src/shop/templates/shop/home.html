@@ -14,11 +14,13 @@
         <div class="col">
           <div class="card shadow-sm">
 
+          <a href="{{ product.get_absolute_url }}">
             {% if product.first_image %}
                 <img class="img-fluid" alt="Responsive image" src="{{ product.first_image.url }}">
             {% else %}
                 <img class="img-fluid" alt="Default image" src="media/no_image_available.jpg">
             {% endif %}
+          </a>
 
             <div class="card-body">
               <p class="card-text">

@@ -52,8 +52,13 @@
                                 </select>
 
                             </div>
-                            <div class="col-6 text-end"><button type="button" class="btn btn-secondary btn-sm">Add to
-                                    basket</button></div>
+                            <form action="{% url 'cart:add_to_cart' product_details.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <div class="col-6 text-end">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                    Add to Cart</button></div>
+                                </form>
+                        </div>
                         </div>
                     </div>
                 </div>

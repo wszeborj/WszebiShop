@@ -42,6 +42,12 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('shop:product_details', args=[str(self.pk)])
 
+    def first_image(self):
+        if self.images.exists():
+            return self.images.first().image
+        else:
+            return None
+
 
 class Image(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
