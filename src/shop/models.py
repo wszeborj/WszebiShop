@@ -40,7 +40,7 @@ class Product(models.Model):
         ordering = ('-created_at',)
 
     def get_absolute_url(self):
-        return reverse('shop:product_details', args=[str(self.pk)])
+        return reverse('shop:product-details', args=[str(self.pk)])
 
     def first_image(self):
         if self.images.exists():

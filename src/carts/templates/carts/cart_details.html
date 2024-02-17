@@ -19,7 +19,7 @@
         </div>
         <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
 
-          <div class="border">
+          <div>
           <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-reset">
             <h1 class="h5 pt-2">{{ item.product.name }}  ({{ item.product_id }})</h1>
           </a>
@@ -29,7 +29,7 @@
             </div>
               <p><span class="h6 fw-bold">{{ item.quantity }} {{ item.product.unit }} X {{ item.product.unit_price }}</span></p>
               <div class="col">
-              <form action="{% url 'cart:add_to_cart' product_id=item.product.id %}" method="POST" class="d-inline">
+              <form action="{% url 'carts:add-to-cart' product_id=item.product.id %}" method="POST" class="d-inline">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-outline-secondary btn-sm update-button">
                     Add one
@@ -38,7 +38,7 @@
               </div>
 
               <div class="col">
-              <form action="{% url 'cart:remove_from_cart' product_id=item.product.id %}" method="POST" class="d-inline">
+              <form action="{% url 'carts:remove-from-cart' product_id=item.product.id %}" method="POST" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-secondary btn-sm delete-button">
                   Remove one
@@ -61,23 +61,23 @@
 
     </div>
   </div>
+    <div class="row">
 
-  <div class="row">
-  <div class="col-6 text-start">
-  <form action="{% url 'cart:remove_all' %}" method="POST" class="d-inline-flex">
+<div class="col text-center">
+      <form action="{% url 'carts:remove-all' %}" method="POST" class="d-inline-flex">
       {% csrf_token %}
-    <button type="submit" class="btn btn-outline-secondary btn-sm delete-button">
+    <button type="submit" class="btn btn-outline-danger btn-sm delete-button">
       Remove all
     </button>
   </form>
-  </div>
-
-    <div class="col-6 text-start">
-        <button type="button" class="btn btn-outline-secondary btn-sm">Order</button>
-    </div>
-  </div>
-
+    <form action="" method="POST" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+            Order</button>
+    </form>
 </div>
+    </div>
+
 </main>
 
 {% endblock %}

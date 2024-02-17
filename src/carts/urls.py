@@ -1,17 +1,18 @@
 from django.contrib import admin
 from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
+
 from . import views
 
-app_name = 'cart'
+app_name = 'carts'
 
 urlpatterns = [
-    path('', views.view_cart, name='cart_details'),
-    path('add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
-    path('remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
-    path('remove/', views.remove_all, name='remove_all'),
+    path('', views.view_cart, name='cart-details'),
+    # path('', views.CartListView.as_view(), name='cart-details'),
+    # path('<int:product_id>/add/', views.add_to_cart, name='add-to-cart'),
+    path('<int:product_id>/add/', views.AddToCart.as_view(), name='add-to-cart'),
+    # path('<int:product_id>/remove/', views.remove_from_cart, name='remove-from-cart'),
+    path('<int:product_id>/remove/', views.RemoveFromCart.as_view(), name='remove-from-cart'),
+    # path('remove-all/', views.remove_all, name='remove-all'),
+    path('remove-all/', views.RemoveAll.as_view(), name='remove-all'),
 
 ]
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
