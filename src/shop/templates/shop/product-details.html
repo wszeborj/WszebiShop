@@ -58,6 +58,12 @@
                                 <button type="submit" class="btn btn-outline-secondary btn-sm">
                                     Add to Cart</button></div>
                                 </form>
+                            <form action="{% url 'orders:product-to-order' product_details.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <div class="col-6 text-end">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                    Order</button></div>
+                                </form>
                         </div>
                         </div>
                     </div>

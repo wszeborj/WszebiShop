@@ -1,16 +1,18 @@
+import os
+import random
 from datetime import datetime
-from django.core.management.base import BaseCommand
+
 from django.contrib.auth import get_user_model
 from django.core.files import File
-from shop.models import Product, Category, Image
+from django.core.management.base import BaseCommand
 from faker import Faker
-import random
-import os
+
 from core.settings import MEDIA_ROOT
+from shop.models import Category, Image, Product
 
 
 class Command(BaseCommand):
-    help = 'Create a superuser with custom options'
+    help = "Create a superuser with custom options"
 
     def handle(self, *args, **options):
         self.create_super_user()
@@ -21,17 +23,31 @@ class Command(BaseCommand):
     def create_super_user(self):
         User = get_user_model()
 
-        user = User.objects.create_superuser(username='admin', email='admin@admin.com', password='admin', phone='123456789',
-                                             birth_date=datetime.fromisoformat('1990-12-04'),
-                                             status='ACTIVE')
-        self.stdout.write(self.style.SUCCESS(f'Superuser "{user} created successfully.'))
+        user = User.objects.create_superuser(
+            username="admin",
+            email="admin@admin.com",
+            password="admin",
+            phone="123456789",
+            birth_date=datetime.fromisoformat("1990-12-04"),
+            status="ACTIVE",
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f'Superuser "{user} created successfully.')
+        )
 
     def create_batch_categories(self):
-        categories = ['Elektronika', 'Odzież', 'Książki', 'Komputery', 'Sport', 'Motoryzacja']
+        categories = [
+            "Elektronika",
+            "Odzież",
+            "Książki",
+            "Komputery",
+            "Sport",
+            "Motoryzacja",
+        ]
         for category_name in categories:
             Category.objects.create(name=category_name)
 
-        self.stdout.write(self.style.SUCCESS(f'Categories created successfully.'))
+        self.stdout.write(self.style.SUCCESS("Categories created successfully."))
 
     def create_batch_products(self):
         fake = Faker()
@@ -53,15 +69,15 @@ class Command(BaseCommand):
                 unit_price=unit_price,
                 in_stock=in_stock,
                 sold=sold,
-                special_offer=special_offer
+                special_offer=special_offer,
             )
 
             product.save()
 
-        self.stdout.write(self.style.SUCCESS(f'Products created successfully.'))
+        self.stdout.write(self.style.SUCCESS("Products created successfully."))
 
     def generate_random_images(self, folder_path: str, num_images: int):
-        ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+        ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
         if not os.path.exists(folder_path):
             print(f"Folder path '{folder_path}' does not exist.")
@@ -77,22 +93,19 @@ class Command(BaseCommand):
         return selected_images
 
     def create_batch_images(self):
-        folder_path = os.path.join(MEDIA_ROOT, 'product_images/')
+        folder_path = os.path.join(MEDIA_ROOT, "product_images/")
         for product in Product.objects.all():
             num_images = random.randint(0, 3)
             selected_images = self.generate_random_images(
-                folder_path=folder_path,
-                num_images=num_images)
+                folder_path=folder_path, num_images=num_images
+            )
 
             for image_file in selected_images:
                 image_path = os.path.join(folder_path, image_file)
-                with open(image_path, 'rb') as f:
+                with open(image_path, "rb") as f:
                     image_obj = Image.objects.create(product=product)
                     image_obj.image.save(image_file, File(f))
                     image_obj.save()
-
-
-
 
         # product1 = Product.objects.create(
         #     name='Aparat1',

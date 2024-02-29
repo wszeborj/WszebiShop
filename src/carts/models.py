@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse_lazy
+
 from shop.models import Product
 from users.models import Account
 
@@ -19,4 +20,3 @@ class CartItem(models.Model):
     @property
     def total_product_cost(self):
         return self.quantity * self.product.unit_price
-

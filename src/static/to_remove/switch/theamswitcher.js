@@ -1,6 +1,6 @@
 /* Theam switcher js file */
 jQuery(document).ready(function() {
-// Pattern Selector function//////////////////////////////////	
+// Pattern Selector function//////////////////////////////////
 	jQuery('.patterns a').click(function(e) {
 		e.preventDefault();
 			jQuery(this).parent().find('img').removeClass('active');
@@ -25,7 +25,7 @@ jQuery(document).ready(function() {
 		}
 
 	});
-	
+
 	/* Settings Button */
 	$('#themesBtn').click(function() {
 	  $('#secectionBox').animate({
@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
 	  }, 100, function() {
 		// Animation complete.
 	  });
-	}); 
+	});
 
 
 	$('#hideme').click(function() {
@@ -47,14 +47,12 @@ jQuery(document).ready(function() {
 	  }, 500, function() {
 		// Animation complete.
 	  });
-	  
+
 	  $('#themesBtn').animate({
 		right:'0'
 	  }, 700, function() {
 		// Animation complete.
-	  }); 
+	  });
 	});
 
 });
-
-

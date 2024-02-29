@@ -33,7 +33,7 @@
             <button type="submit" class="btn btn-outline-secondary btn-sm">
                 Add to Cart</button>
             </form>
-              <form action="" method="POST" class="d-inline">
+              <form action="{% url 'orders:product-to-order' product.id %}" method="POST" class="d-inline">
                   {% csrf_token %}
                 <button type="submit" class="btn btn-outline-secondary btn-sm">
                     Order</button>
@@ -50,4 +50,3 @@
     </div>
 
 {% endblock %}
-

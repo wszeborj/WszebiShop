@@ -1,32 +1,43 @@
-from django.shortcuts import redirect
 from django.contrib import messages
-from .models import CartItem
-from shop.models import Product
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import ListView, View
+
+from shop.models import Product
+
+from .forms import CartUpdateForm
+from .models import CartItem
 
 
-class CartListView(LoginRequiredMixin, ListView):
-    template_name = 'carts/cart_details.html'
+class CartListView(ListView):
+    template_name = "carts/cart_details.html"
     model = CartItem
-    context_object_name = 'cart_items'
-    ordering = ['-created_at']
+    context_object_name = "cart_items"
+    ordering = ["-created_at"]
 
     def get_queryset(self):
         return CartItem.objects.filter(account=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['total_price'] = sum(item.product.unit_price * item.quantity for item in context['cart_items'])
+        context["total_price"] = sum(
+            item.product.unit_price * item.quantity for item in context["cart_items"]
+        )
+
+        update_quantity_form = CartUpdateForm()
+        context["update_quantity_form"] = update_quantity_form
+
         return context
 
 
 class AddToCart(LoginRequiredMixin, View):
+    redirect_field_name = None
+
     def post(self, request, product_id: int, quantity: int = 1):
         product = get_object_or_404(Product, pk=product_id)
-        cart_item, created = CartItem.objects.get_or_create(product=product,
-                                                            account=request.user)
+        cart_item, created = CartItem.objects.get_or_create(
+            product=product, account=request.user
+        )
         if created:
             cart_item.quantity = int(quantity)
             cart_item.save()
@@ -37,15 +48,17 @@ class AddToCart(LoginRequiredMixin, View):
                 cart_item.save()
                 messages.success(request, "Item added to your cart.")
             else:
-                messages.warning(request, f"Not enough product in stock. Maximum quantity is {product.in_stock}")
-        return redirect('carts:cart-details')
+                messages.warning(
+                    request,
+                    f"Not enough product in stock. Maximum quantity is {product.in_stock}",
+                )
+        return redirect("carts:cart-details")
 
 
-class RemoveFromCart(LoginRequiredMixin, View):
+class RemoveFromCart(View):
     def post(self, request, product_id, quantity=1):
         product = get_object_or_404(Product, pk=product_id)
-        cart_item = CartItem.objects.get(product=product,
-                                         account=request.user)
+        cart_item = CartItem.objects.get(product=product, account=request.user)
         cart_item.quantity -= int(quantity)
 
         if cart_item.quantity <= 0:
@@ -53,7 +66,7 @@ class RemoveFromCart(LoginRequiredMixin, View):
         else:
             cart_item.save()
         messages.success(request, "Item removed from your cart.")
-        return redirect('carts:cart-details')
+        return redirect("carts:cart-details")
 
 
 class RemoveAll(LoginRequiredMixin, View):
@@ -62,4 +75,32 @@ class RemoveAll(LoginRequiredMixin, View):
         for item in cart_items:
             item.delete()
 
-        return redirect('carts:cart-details')
+        messages.success(request, "All items removed from your cart.")
+
+        return redirect("carts:cart-details")
+
+
+class RemoveItem(View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, pk=product_id)
+        cart_item = CartItem.objects.get(product=product, account=request.user)
+        cart_item.delete()
+        messages.success(request, "Item removed from your cart.")
+
+        return redirect("carts:cart-details")
+
+
+class UpdateCart(View):
+    def post(self, request, product_id):
+        form = CartUpdateForm(request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data["quantity"]
+            cart_item = get_object_or_404(CartItem, pk=product_id, account=request.user)
+            cart_item.quantity = int(quantity)
+            cart_item.save()
+            messages.success(request, "Quantity updated.")
+            if cart_item.quantity == 0:
+                cart_item.delete()
+                messages.success(request, "Quantity updated. Item removed")
+
+        return redirect("carts:cart-details")
