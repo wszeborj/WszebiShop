@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand
 from faker import Faker
 
 from core.settings import MEDIA_ROOT
+from orders.models import ShippingType
 from shop.models import Category, Image, Product
 
 
@@ -19,6 +20,7 @@ class Command(BaseCommand):
         self.create_batch_categories()
         self.create_batch_products()
         self.create_batch_images()
+        self.create_batch_shipping_type()
 
     def create_super_user(self):
         User = get_user_model()
@@ -106,6 +108,14 @@ class Command(BaseCommand):
                     image_obj = Image.objects.create(product=product)
                     image_obj.image.save(image_file, File(f))
                     image_obj.save()
+
+    def create_batch_shipping_type(self):
+        types = ["courier", "courier_cash_on_delivery", "post", "parcel_locker"]
+        for type in types:
+            ShippingType.objects.create(
+                type=type, price=round(random.uniform(5.00, 100.00), 2)
+            )
+        self.stdout.write(self.style.SUCCESS("Shipping types created successfully."))
 
         # product1 = Product.objects.create(
         #     name='Aparat1',

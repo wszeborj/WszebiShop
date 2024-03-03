@@ -56,7 +56,7 @@ class OrderItem(models.Model):
 class ShippingType(models.Model):
     type = models.TextField(max_length=50)
     price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
-    order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    # order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
 
 
 #     class ShippingType(models.TextChoices):
