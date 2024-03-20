@@ -27,6 +27,7 @@ urlpatterns = [
     path("", include("shop.urls", namespace="shop")),
     path("carts/", include("carts.urls")),
     path("orders/", include("orders.urls")),
+    # path("payments/", include("payments.urls")),
     path(
         "register/",
         user_views.RegisterFormView.as_view(template_name="users/register.html"),

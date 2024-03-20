@@ -44,6 +44,7 @@ INSTALLED_EXTENSIONS = [
     "users",
     "carts",
     "orders",
+    "payments",
 ]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
@@ -142,3 +143,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_REDIRECT_URL = "shop:all-product-list"
 LOGIN_URL = "login"
+
+STRIPE_PUBLISHED_KEY = env("STRIPE_PUBLISHED_KEY")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")

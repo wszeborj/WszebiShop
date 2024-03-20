@@ -12,4 +12,6 @@ urlpatterns = [
         name="product-to-order",
     ),
     path("add-address", views.AddAddress.as_view(), name="add-address"),
+    # path("select-shipping-address", views.SelectShippingAddress.as_view(), name="select-shipping-address"),
+    # path("select-shipping-type", views.SelectShippingType.as_view(), name="select-shipping-type"),
 ]

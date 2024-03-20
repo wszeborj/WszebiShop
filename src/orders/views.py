@@ -8,7 +8,7 @@ from carts.models import CartItem
 from shop.models import Product
 
 from .forms import AddressForm
-from .models import Address
+from .models import Address, ShippingType
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -29,6 +29,33 @@ class OrderListView(LoginRequiredMixin, ListView):
         context["shipping_addresses"] = Address.objects.filter(
             account=self.request.user
         )
+        context["shipping_types"] = ShippingType.objects.all()
+
+        selected_shipping_address_id = self.request.GET.get("shipping_address")
+        if selected_shipping_address_id:
+            context["selected_shipping_address"] = Address.objects.get(
+                id=selected_shipping_address_id
+            )
+        else:
+            context["selected_shipping_address"] = Address.objects.filter(
+                account=self.request.user
+            ).latest("created_at")
+
+        selected_shipping_type_id = self.request.GET.get("shipping_type")
+        if selected_shipping_type_id:
+            context["selected_shipping_type"] = ShippingType.objects.get(
+                id=selected_shipping_type_id
+            )
+        else:
+            context["selected_shipping_type"] = ShippingType.objects.order_by(
+                "-id"
+            ).first()
+
+        total_price_with_shipping = (
+            context.get("total_price") + context.get("selected_shipping_type").price
+        )
+
+        context["total_price_with_shipping"] = total_price_with_shipping
 
         return context
 

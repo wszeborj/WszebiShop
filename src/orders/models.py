@@ -26,18 +26,12 @@ class Address(models.Model):
 
 
 class OrderItem(models.Model):
-    class OrderStatus(models.TextChoices):
-        NEW = "NEW", "NEW"
-        PAID = "PAID", "PAID"
-        SHIPPED = "SHIPPED", "SHIPPED"
-        DELIVERED = "DELIVERED", "DELIVERED"
-        CLOSED = "CLOSED", "CLOSED"
-
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+    order = ...
 
     class Meta:
         ordering = ("-created_at",)
@@ -59,20 +53,18 @@ class ShippingType(models.Model):
     # order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
 
 
-#     class ShippingType(models.TextChoices):
-#         COURIER = 'COURIER', 'COURIER'
-#         COURIER_CASH_ON_DELIVERY = 'COURIER_CASH_ON_DELIVERY', 'COURIER_CASH_ON_DELIVERY'
-#         POST = 'POST', 'POST'
-#         PARCEL_LOCKER = 'PARCEL_LOCKER', 'PARCEL_LOCKER'
+class Order(models.Model):
+    class OrderStatus(models.TextChoices):
+        NEW = "NEW", "NEW"
+        PAID = "PAID", "PAID"
+        SHIPPED = "SHIPPED", "SHIPPED"
+        DELIVERED = "DELIVERED", "DELIVERED"
+        CLOSED = "CLOSED", "CLOSED"
 
-
-#
-# class Payment(models.Model):
-#     class State(models.TextChoices):
-#         NEW = 'NEW', 'NEW'
-#         PAID = 'PAID', 'PAID'
-#
-#     paid = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
-#     paid_time = models.DateTimeField()
-#     state = models.IntegerField(choices=State.choices)
-#
+    status = models.TextField(choices=OrderStatus.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+    buyer = models.ForeignKey(Account, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    shipping_type = models.ForeignKey(ShippingType, on_delete=models.CASCADE)
+    # tracking_number = ...
