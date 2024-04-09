@@ -14,3 +14,6 @@ class Account(AbstractUser):
     phone = PhoneNumberField()
     birth_date = models.DateField()
     status = models.TextField(choices=State.choices)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"

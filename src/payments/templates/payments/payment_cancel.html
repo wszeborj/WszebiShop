@@ -1,0 +1,14 @@
+{% extends "shop/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Checkout canceled{% endblock %}
+
+{% block content %}
+  <h1>Payment Cancelled</h1>
+  <p>Forgot to add something to your cart? Shop around then come back to pay!</p>
+
+  <a class="btn btn-outline-secondary btn-sm" href="{% url 'orders:order-confirmation' %}">
+    Go to order confirmation
+  </a>
+{% endblock %}

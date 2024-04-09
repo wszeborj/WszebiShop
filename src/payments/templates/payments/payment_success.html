@@ -1,0 +1,14 @@
+{% extends "shop/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Payment complete{% endblock %}
+
+{% block content %}
+  <h1>Payment Completed</h1>
+  <p>Thank you for your payment. Your order has been processed successfully.</p>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'orders:orders-list' %}">
+        Go to orders list
+    </a>
+
+{% endblock %}

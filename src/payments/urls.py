@@ -1,9 +1,17 @@
 from django.urls import path
 
-from . import views
+from .views import (
+    CancelledView,
+    CreateStripeCheckoutSessionView,
+    SuccessView,
+    stripe_webhook,
+)
 
-app_name = "orders"
+app_name = "payments"
 
 urlpatterns = [
-    path("", views.OrderListView.as_view(), name="payments"),
+    path("process/", CreateStripeCheckoutSessionView.as_view(), name="payment-process"),
+    path("success/", SuccessView.as_view(), name="payment-success"),
+    path("cancel/", CancelledView.as_view(), name="payment-cancel"),
+    path("stripe-webhook/", stripe_webhook, name="stripe-webhook"),
 ]

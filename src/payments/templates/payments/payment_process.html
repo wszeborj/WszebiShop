@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Payment process{% endblock %}
+
+{% block content %}
+  <h1>Checkout</h1>
+  <form action="{% url 'payments:payment-success' %}" method="POST">
+    {% csrf_token %}
+    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+            data-key="{{ stripe_public_key }}"
+            data-amount="{{ total_price_with_shipping }}"
+            data-name="Your Store"
+            data-description="Payment for Order"
+            data-image="{% static 'your_logo.png' %}"
+            data-locale="auto"
+            data-currency="pln">
+    </script>
+  </form>
+{% endblock %}

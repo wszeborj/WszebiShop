@@ -8,11 +8,11 @@ from carts.models import CartItem
 from shop.models import Product
 
 from .forms import AddressForm
-from .models import Address, ShippingType
+from .models import Address, Order, ShippingType
 
 
-class OrderListView(LoginRequiredMixin, ListView):
-    template_name = "orders/orders.html"
+class OrderConfirmationListView(LoginRequiredMixin, ListView):
+    template_name = "orders/orders_confirmation.html"
     model = CartItem
     context_object_name = "cart_items"
     ordering = ["-created_at"]
@@ -80,7 +80,7 @@ class ProductToOrder(LoginRequiredMixin, View):
                 request,
                 f"Not enough product in stock. Maximum quantity is {product.in_stock}",
             )
-        return redirect("orders:order")
+        return redirect("orders:order-confirmation")
 
 
 class AddAddress(LoginRequiredMixin, FormView):
@@ -97,3 +97,14 @@ class AddAddress(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         messages.warning(self.request, "Some values in address form were wrong")
         return super().form_invalid(form)
+
+
+class OrderListView(LoginRequiredMixin, ListView):
+    template_name = "orders/orders_list.html"
+    model = "Order"
+    context_object_name = "order_items"
+    ordering = ["-created_at"]
+    # queryset = Order.objects.all()
+
+    def get_queryset(self):
+        return Order.objects.filter(buyer=self.request.user)
