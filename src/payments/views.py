@@ -1,6 +1,8 @@
 import stripe
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -152,9 +154,7 @@ def stripe_webhook(request):
         OrderClassProcessing.change_payment_status(
             order_id=order_id, status=Order.OrderStatus.UNPAID
         )
-        OrderClassProcessing.email_customer_about_failed_payment(
-            order_id=order_id, send_email=False, save_to_file=True
-        )
+        OrderClassProcessing.email_customer_about_failed_payment(order_id=order_id)
 
         # Passed signature verification
     return HttpResponse(status=200)
@@ -176,8 +176,13 @@ class OrderClassProcessing:
                 order=order,
             )
 
-            purchased_product = Product.objects.get(pk=item.product.id)
-            purchased_product.in_stock = purchased_product.in_stock - item.quantity
+            Product.objects.filter(pk=item.product.id).update(
+                in_stock=F("in_stock") - item.quantity
+            )
+
+            # purchased_product = Product.objects.get(pk=item.product.id)
+            # purchased_product.in_stock = purchased_product.in_stock - item.quantity
+            # purchased_product.save()
 
             item.delete()
         order = Order.objects.get(pk=order_id)
@@ -186,7 +191,7 @@ class OrderClassProcessing:
     @staticmethod
     def create_order(
         account: int, address: int, shipping_type: int, total_price_with_shipping: float
-    ):
+    ) -> int:
         print("Creating order")
         buyer = Account.objects.get(pk=account)
         address = Address.objects.get(pk=address)
@@ -199,19 +204,19 @@ class OrderClassProcessing:
             shipping_type=shipping_type,
             total_price_with_shipping=total_price_with_shipping,
         )
-        order.save()
 
         return order.id
 
     @staticmethod
     def change_payment_status(order_id: int, status: Order.OrderStatus):
         print(f"change {order_id=} to {status}")
+        # TODO filter + update.
         order = Order.objects.get(pk=order_id)
         order.status = status
         order.save()
 
     @staticmethod
-    def create_payment(order, session):
+    def create_payment(order):
         print("create payment")
         Payment.objects.create(
             user=order.buyer,
@@ -221,30 +226,21 @@ class OrderClassProcessing:
         )
 
     @staticmethod
-    def email_customer_about_failed_payment(
-        order_id: int, send_email: bool = True, save_to_file: bool = False
-    ):
-        # TODO: fill me in
-        print("Emailing customer")
+    def email_customer_about_failed_payment(order_id: int):
+        order = Order.objects.get(pk=order_id)
+        recipient_mail = order.buyer.email
 
-        subject = "Problem z płatnością za Twoje zamówienie"
-        message = f"""
-        Hello,
+        subject = "Issue with payment for your order"
+        message = (
+            f"Hello, \nUnfortunately, the payment for your order number {order_id} was not processed. "
+            f"Please make your payment again so that we can process your order.\nThank you,\nWszebishop.pl"
+        )
 
-        Unfortunately, the payment for your order number {order_id} was not processed.
-        Please make your payment again so that we can process your order.
-
-        Thank you,
-        Wszebishop.pl
-        """
-
-        if save_to_file:
-            with open(f"failed_payment_email_{order_id}.txt", "w") as file:
-                file.write(f"Subject: {subject}\n\n")
-                file.write(message)
-            print(
-                f"Email about failed payment saved to file failed_payment_email_{order_id}.txt"
-            )
-
-        if send_email:
-            pass
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email="no_reply@wszebiszop.pl",
+            recipient_list=[recipient_mail],
+            fail_silently=False,
+        )
+        print(f"Email about failed payment saved to file in {settings.EMAIL_FILE_PATH}")

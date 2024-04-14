@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap4",
     "phonenumber_field",
     "bootstrap_datepicker_plus",
+    "django_filters",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -147,3 +148,13 @@ LOGIN_URL = "login"
 STRIPE_PUBLISHED_KEY = env("STRIPE_PUBLISHED_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = "sandbox.smtp.mailtrap.io"
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = "2525"

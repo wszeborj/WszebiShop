@@ -1,0 +1,142 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}Your Order{% endblock %}
+{% block content %}
+    <main class="pt-5">
+        <div class="container">
+            <h1 class="h5">Your Order</h1>
+            {% for item in cart_items %}
+                <div data-index="{{ item.product.id }}"
+                     class="row mb-4 border product-item">
+                    <div class="col-md-3 col-lg-2 order-md-first bg-light">
+                        {% if item.product.first_image %}
+                            <img class="img-fluid mx-auto d-block"
+                                 width="120px"
+                                 alt="Responsive image"
+                                 src="{{ item.product.first_image.url }}">
+                        {% else %}
+                            <img class="img-fluid mx-auto d-block"
+                                 width="120px"
+                                 alt="Default image"
+                                 src="../media/no_image_available.jpg">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
+                        <div>
+                            <a href="{{ item.product.get_absolute_url }}"
+                               class="text-decoration-none text-reset">
+                                <h1 class="h5 pt-2">{{ item.product.name }}  ({{ item.product_id }})</h1>
+                            </a>
+                            <p>
+                                <span class="h6 fw-bold">{{ item.quantity }} {{ item.product.unit }} X {{ item.product.unit_price }}</span>
+                            </p>
+                            <p>
+                                <span class="h6 fw-bold">Sum product cost: {{ item.total_product_cost }} zł</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Your order list is empty.</p>
+            {% endfor %}
+            <div class="col-12 text-end">
+                <div class="h6 fw-bold">
+                    Sub Total:
+                    <div id="subtotal" class="d-inline-flex">{{ total_price }} zł</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center mb-3">
+                <a class="btn btn-outline-secondary btn-sm"
+                   href="{% url 'carts:cart-details' %}">Edit in cart</a>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col text-center mb-3">
+                    <form action="{% url 'orders:add-address' %}"
+                          method="POST"
+                          class="d-inline-flex">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm delete-button">Add New Address</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center mb-3">
+                    <form action="{% url 'orders:order-confirmation' %}" method="GET" class="d-inline">
+                        {% csrf_token %}
+                        <div>
+                            <label for="shipping_address">Select shipping address:</label>
+                            <select name="shipping_address" id="shipping_address">
+                                <option value="">Choose an address</option>
+                                {% for address in shipping_addresses %}
+                                    <option value="{{ address.id }}"
+                                            {% if address.id == selected_shipping_address.id %}selected{% endif %}>
+                                        {{ address.first_name }} {{ address.last_name }}, ul. {{ address.street }}, {{ address.city }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <p>Chosen Address:</p>
+                            <p>
+                                Full name: {{ selected_shipping_address.first_name }} {{ selected_shipping_address.last_name }}
+                                <br>
+                                Street: {{ selected_shipping_address.street }}
+                                <br>
+                                City, State, Postal Code:
+                                {{ selected_shipping_address.city }}, {{ selected_shipping_address.state }} {{ selected_shipping_address.postal_code }}
+                                <br>
+                                Country {{ selected_shipping_address.country }}
+                            </p>
+                        </div>
+                        <div>
+                            <label for="shipping_type">Select shipping type:</label>
+                            <select name="shipping_type" id="shipping_type">
+                                <option value="">Choose Shipping type - Price</option>
+                                {% for shipping_type in shipping_types %}
+                                    <option value="{{ shipping_type.id }}"
+                                            {% if shipping_type.id == selected_shipping_type.id %}selected{% endif %}>
+                                        {{ shipping_type.type }} - {{ shipping_type.price }} zł
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <p>Chosen shipping Type: {{ selected_shipping_type.type }} - {{ selected_shipping_type.price }} zł</p>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm update-button">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="col-12 text-center">
+                <div class="h6 fw-bold">
+                    Total price with shipping:
+                    <div id="subtotal" class="d-inline-flex">{{ total_price_with_shipping }} zł</div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col text-center mb-3">
+                    <form action="{% url 'payments:payment-process' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden"
+                               name="total_price_with_shipping"
+                               value="{{ total_price_with_shipping }}">
+                        <input type="hidden"
+                               name="selected_shipping_address"
+                               value="{{ selected_shipping_address.id }}">
+                        <input type="hidden"
+                               name="selected_shipping_type"
+                               value="{{ selected_shipping_type.id }}">
+                        <button type="submit" class="btn btn-primary btn-lg">Proceed to Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
