@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 
+from users.models import Account
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -26,11 +28,12 @@ class Product(models.Model):
     unit = models.CharField(max_length=10)
     unit_price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
     in_stock = models.IntegerField()
-    sold = models.IntegerField()
+    sold = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     special_offer = models.BooleanField()
     is_active = models.BooleanField(default=True)
+    seller = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name} ({self.id})"

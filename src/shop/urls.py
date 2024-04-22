@@ -9,4 +9,5 @@ urlpatterns = [
     path(
         "products/<int:pk>/", views.ProductDetailsView.as_view(), name="product-details"
     ),
+    path("products/create", views.ProductCreateView.as_view(), name="product-create"),
 ]

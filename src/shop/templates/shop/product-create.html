@@ -1,0 +1,26 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{ product_details.name }}
+{% endblock %}
+{% block content %}
+<div class="container">
+    <main class="pt-5">
+        <div class="row g-3">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <h3>Product Images</h3>
+            <input type="file" name="images" multiple>
+
+            <button type="submit">Save Product</button>
+        </form>
+
+
+        </div>
+    </main>
+
+</div>
+{% endblock %}
