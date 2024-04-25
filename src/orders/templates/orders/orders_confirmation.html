@@ -133,7 +133,9 @@
                         <input type="hidden"
                                name="selected_shipping_type"
                                value="{{ selected_shipping_type.id }}">
-                        <button type="submit" class="btn btn-primary btn-lg">Proceed to Payment</button>
+                        <button type="submit" class="btn btn-primary btn-lg"
+                                {% if not selected_shipping_address.id %}disabled{% endif %}>
+                            Proceed to Payment</button>
                     </form>
                 </div>
             </div>

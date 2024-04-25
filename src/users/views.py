@@ -9,9 +9,9 @@ from .forms import ProfileUpdateForm, UserRegisterForm
 class RegisterFormView(FormView):
     template_name = "users/register.html"
     form_class = UserRegisterForm
-    success_url = reverse_lazy("/login/")
+    success_url = reverse_lazy("users:login")
 
-    def form_vaild(self, form):
+    def form_valid(self, form):
         account = form.save()
 
         messages.success(
@@ -25,7 +25,7 @@ class RegisterFormView(FormView):
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "users/profile.html"
     form_class = ProfileUpdateForm
-    success_url = reverse_lazy("profile")
+    success_url = reverse_lazy("users:profile-update")
 
     def get_object(self, queryset=None):
         return self.request.user

@@ -56,16 +56,8 @@ class Image(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="images"
     )
-    image = models.ImageField(
-        upload_to="product_images", default="no_image_available.jpg"
-    )
+    image = models.ImageField(upload_to="product_images")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"({self.id}) {self.image} created at: {self.created_at}"
-
-
-# class Company(models.Model):
-#     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-#     company_NIP = models.IntegerField()
-#     company_name = models.CharField()

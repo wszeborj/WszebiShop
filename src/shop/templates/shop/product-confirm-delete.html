@@ -1,0 +1,22 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}
+{{ product.name }}
+{% endblock %}
+{% block content %}
+<div class="container">
+    <main class="pt-5">
+        <div class="row g-3">
+            <h1>Delete Product</h1>
+            <p>Are you sure you want to delete "{{ object.name }}"?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+                <a href="{% url 'products:user-product-list' %}">Cancel</a>
+            </form>
+        </div>
+    </main>
+
+</div>
+{% endblock %}

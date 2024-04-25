@@ -14,7 +14,7 @@
                         <div class="carousel-inner">
                             {% for image in images %}
                                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                    <img class="d-block w-100" src="{{ image.image.url }}" alt="Slide {{ forloop.counter }}">
+{#                                    <img class="d-block w-100" src="{{ image.image.url }}" alt="Slide {{ forloop.counter }}">#}
                                 </div>
                             {% endfor %}
                         </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
                 <h1 class="mb-0 h4">{{ product_details.name }}</h1>
-                <p><span class="lead">{{ product_details.author }}</span> (Author)</p>
+                <p>Seller: <span class="lead">{{ product_details.seller.full_name }}</span></p>
                 <p>{{ product_details.description|slice:":355" }}...</p>
                 <div class="border">
                     <div class="col border-bottom">
@@ -43,13 +43,13 @@
                     <div class="col">
                         <div class="row p-3">
                             <div class="col-6">
-                                <label for="select">Qty</label>
-                                <select id="select">
-                                    <option value="">1</option>
-                                    <option value="">2</option>
-                                    <option value="">3</option>
-                                    <option value="">4</option>
-                                </select>
+{#                                <label for="select">Qty</label>#}
+{#                                <select id="select">#}
+{#                                    <option value="">1</option>#}
+{#                                    <option value="">2</option>#}
+{#                                    <option value="">3</option>#}
+{#                                    <option value="">4</option>#}
+{#                                </select>#}
 
                             </div>
                             <form action="{% url 'carts:add-to-cart' product_details.id %}" method="POST" class="d-inline">

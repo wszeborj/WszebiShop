@@ -10,7 +10,7 @@ class UserRegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super(UserRegisterForm, self).__init__(*args, **kwargs)
-        self.fields["birth_date"].widget = DatePickerInput(format="%Y-%m-%d")
+        # self.fields["birth_date"].widget = DatePickerInput(format="%Y-%m-%d")
 
     class Meta:
         model = Account
@@ -29,4 +29,8 @@ class UserRegisterForm(UserCreationForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Account
-        fields = ("username", "email", "phone", "birth_date", "status")
+        fields = (
+            "username",
+            "email",
+            "phone",
+        )

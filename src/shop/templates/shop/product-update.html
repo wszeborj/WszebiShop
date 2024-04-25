@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block title %}
-{{ product_details.name }}
+{{ product.name }}
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -17,8 +17,6 @@
 
             <button type="submit">Save Product</button>
         </form>
-
-
         </div>
     </main>
 

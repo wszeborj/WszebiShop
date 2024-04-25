@@ -17,4 +17,5 @@ urlpatterns = [
     ),
     path("add-address", views.AddAddress.as_view(), name="add-address"),
     path("", views.OrderListView.as_view(), name="orders-list"),
+    path("<int:pk>/detail", views.OrderDetailView.as_view(), name="order-details"),
 ]

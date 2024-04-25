@@ -1,4 +1,7 @@
+from decimal import Decimal
+
 from django.db import models
+from django.urls import reverse
 from phonenumber_field.modelfields import PhoneNumberField
 
 from shop.models import Product
@@ -36,11 +39,17 @@ class Order(models.Model):
         AWAITING_PAYMENT = "AWAITING_PAYMENT", "AWAITING_PAYMENT"
         UNPAID = "UNPAID", "UNPAID"
         PAID = "PAID", "PAID"
+
+    class OrderShippingStatus(models.TextChoices):
+        NEW = "NEW", "NEW"
         SHIPPED = "SHIPPED", "SHIPPED"
         DELIVERED = "DELIVERED", "DELIVERED"
         CLOSED = "CLOSED", "CLOSED"
 
-    status = models.TextField(choices=OrderStatus.choices)
+    status = models.TextField(choices=OrderStatus.choices, default=OrderStatus.NEW)
+    shipping_status = models.TextField(
+        choices=OrderShippingStatus.choices, default=OrderShippingStatus.NEW
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
     buyer = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -51,21 +60,30 @@ class Order(models.Model):
     )
     # tracking_number = ...
 
+    def get_absolute_url(self):
+        return reverse("orders:order-details", args=[str(self.pk)])
+
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now_add=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
+    update_at = models.DateTimeField(auto_now=True)
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="order_items",
+    )
 
     class Meta:
         ordering = ("-created_at",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.product.name} x {self.quantity}"
 
     @property
-    def total_product_cost(self):
+    def total_product_cost(self) -> Decimal:
         return self.quantity * self.product.unit_price

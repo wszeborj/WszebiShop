@@ -6,12 +6,16 @@
     <main class="pt-5">
         <div class="container">
             <h1 class="h5">Your All Order</h1>
+            <form method="get">
+            {{ filter.form.as_p }}
+            <button type="submit">Filter</button>
+            </form>
             {% for item in order_items %}
                 <div data-index="{{ item.id }}"
                      class="row mb-4 border product-item">
                     <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
                         <div>
-                            <a href=""
+                            <a href="{{ item.get_absolute_url }}"
                                class="text-decoration-none text-reset">
                                 <h1 class="h5 pt-2">{{ item.id }}  ({{ item.created_at }})</h1>
                             </a>

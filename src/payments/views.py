@@ -99,19 +99,6 @@ def stripe_webhook(request):
         # Invalid signature
         return HttpResponse(status=400)
 
-    # checkout_metadata = event['data']['object']['metadata']
-    # print(event['data']['object'])
-    # account = Account.objects.get(pk=int(checkout_metadata.get('account')))
-    # address = Address.objects.get(pk=int(checkout_metadata.get('address')))
-    # shipping_type = ShippingType.objects.get(pk=int(checkout_metadata.get('shipping_type')))
-    # total_price_with_shipping = int(checkout_metadata.get('total_price_with_shipping')) / 100
-    #
-    # order_id = OrderClassProcessing.create_order(
-    #     account=account,
-    #     address=address,
-    #     shipping_type=shipping_type,
-    #     total_price_with_shipping=total_price_with_shipping)
-
     # Handle the checkout.session.completed event
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
@@ -163,30 +150,26 @@ def stripe_webhook(request):
 class OrderClassProcessing:
     @staticmethod
     def fulfill_order(order_id: int):
-        # TODO: fill me in
-        print("Fulfilling order")
-
         order = Order.objects.get(pk=order_id)
+        order.OrderStatus = Order.OrderStatus.PAID
         cart_items = CartItem.objects.filter(account=order.buyer)
+
+        order_items = []
         for item in cart_items:
-            OrderItem.objects.create(
-                product=item.product,
-                quantity=item.quantity,
-                account=order.buyer,
-                order=order,
+            order_items.append(
+                OrderItem(
+                    product=item.product,
+                    quantity=item.quantity,
+                    account=order.buyer,
+                    order=order,
+                )
             )
 
             Product.objects.filter(pk=item.product.id).update(
                 in_stock=F("in_stock") - item.quantity
             )
-
-            # purchased_product = Product.objects.get(pk=item.product.id)
-            # purchased_product.in_stock = purchased_product.in_stock - item.quantity
-            # purchased_product.save()
-
-            item.delete()
-        order = Order.objects.get(pk=order_id)
-        order.OrderStatus = Order.OrderStatus.PAID
+        OrderItem.objects.bulk_create(order_items)
+        cart_items.delete()
 
     @staticmethod
     def create_order(
@@ -209,11 +192,7 @@ class OrderClassProcessing:
 
     @staticmethod
     def change_payment_status(order_id: int, status: Order.OrderStatus):
-        print(f"change {order_id=} to {status}")
-        # TODO filter + update.
-        order = Order.objects.get(pk=order_id)
-        order.status = status
-        order.save()
+        Order.objects.filter(pk=order_id).update(status=status)
 
     @staticmethod
     def create_payment(order):

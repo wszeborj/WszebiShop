@@ -8,12 +8,13 @@
         <h2 class="text-center mb-4">Register</h2>
         <form method="post">
             {% csrf_token %}
+              {{ form.media }}
             {{ form | crispy }}
             <button type="submit">Register</button>
         </form>
     </div>
 </div>
 
-<p class="text-center">Have an account? <a class="ml-2" href="{% url 'login' %}}">Sign Up</a></p>
+<p class="text-center">Have an account? <a class="ml-2" href="{% url 'users:login' %}}">Sign Up</a></p>
 
 {% endblock %}
