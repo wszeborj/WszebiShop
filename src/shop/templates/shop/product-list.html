@@ -20,7 +20,7 @@
                                 <h1 class="h5 pt-2">{{ item.name }} ({{ item.id }}) created at  ({{ item.created_at }})</h1>
                             </a>
                             <p>
-                            <form action="{% url 'shop:product-update' item.id %}" method="POST" class="d-inline">
+                            <form action="{% url 'shop:product-update' item.id %}" method="GET" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-danger btn-sm delete-button">Update Product</button>
                             </form>

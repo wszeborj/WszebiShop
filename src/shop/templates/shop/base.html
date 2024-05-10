@@ -19,6 +19,7 @@
 
       <div class="collapse navbar-collapse" id="navbarsExample05">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href={% url 'users:profile-update' %}>Update Profile</a>
           </li>
@@ -31,6 +32,7 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url "shop:user-product-list" %}">Your Products</a>
           </li>
+        {% endif %}
 
 
           <li class="nav-item dropdown">

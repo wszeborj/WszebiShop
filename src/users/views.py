@@ -5,6 +5,8 @@ from django.views.generic import FormView, UpdateView
 
 from .forms import ProfileUpdateForm, UserRegisterForm
 
+# from .models import Account
+
 
 class RegisterFormView(FormView):
     template_name = "users/register.html"
@@ -26,6 +28,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "users/profile.html"
     form_class = ProfileUpdateForm
     success_url = reverse_lazy("users:profile-update")
+    # queryset = Account.objects.all()
 
     def get_object(self, queryset=None):
         return self.request.user

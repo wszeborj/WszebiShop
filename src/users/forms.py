@@ -34,3 +34,12 @@ class ProfileUpdateForm(forms.ModelForm):
             "email",
             "phone",
         )
+
+    # def __init__(self, *args, **kwargs):
+    #     super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+    #
+    #     if 'instance' in kwargs:
+    #         instance = kwargs['instance']
+    #         self.fields['username'].initial = instance.first_name
+    #         self.fields['email'].initial = instance.first_name
+    #         self.fields['phone'].initial = instance.first_name

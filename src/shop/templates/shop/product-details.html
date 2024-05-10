@@ -8,13 +8,13 @@
 <div class="container">
     <main class="pt-5">
         <div class="row g-3">
-            <div class="col-md-5 col-lg-5 order-md-first bg-light">
-                <td>
+            <div class="col-md-5 col-lg-5 order-md-first bg-light"><td>
+
                     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             {% for image in images %}
                                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-{#                                    <img class="d-block w-100" src="{{ image.image.url }}" alt="Slide {{ forloop.counter }}">#}
+                                    <img class="d-block w-100" src="{{ image.image.url }}" alt="Slide {{ forloop.counter }}">
                                 </div>
                             {% endfor %}
                         </div>
@@ -26,8 +26,7 @@
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
-                    </div>
-                </td>
+                    </div></td>
             </div>
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
                 <h1 class="mb-0 h4">{{ product_details.name }}</h1>
@@ -69,7 +68,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
 </div>

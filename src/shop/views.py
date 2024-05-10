@@ -1,7 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+# from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
 from .forms import ImageForm, ProductForm
 from .models import Product
@@ -45,7 +52,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
         images = self.request.FILES.getlist("image")
         for image_file in images:
-            image_form = ImageForm({"image": image_file})
+            image_form = ImageForm(files={"image": image_file})
             if image_form.is_valid():
                 image = image_form.save(commit=False)
                 image.product = product
@@ -53,14 +60,25 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class UpdateProductView(UpdateView):
+class UpdateProductView(LoginRequiredMixin, UpdateView):
     template_name = "shop/product-update.html"
     form_class = ProductForm
     model = Product
     success_url = reverse_lazy("shop:user-product-list")
 
+    # def get_object(self, queryset=None):
+    #     return get_object_or_404(Product, pk=self.kwargs.get('pk'))
+    #
+    # def get_initial(self):
+    #     initial = super(UpdateProductView, self).get_initial()
+    #
+    #     obj = self.get_object()
+    #     initial['name'] = obj.name
+    #
+    #     return initial
 
-class DeleteProductView(DeleteView):
+
+class DeleteProductView(LoginRequiredMixin, DeleteView):
     template_name = "shop/product-confirm-delete.html"
     model = Product
     success_url = reverse_lazy("shop:user-product-list")
