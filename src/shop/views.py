@@ -1,3 +1,4 @@
+import django_filters
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # from django.shortcuts import get_object_or_404
@@ -9,6 +10,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django_filters.views import FilterView
 
 from .forms import ImageForm, ProductForm
 from .models import Product
@@ -93,3 +95,18 @@ class ProductListView(ListView):
     def get_queryset(self):
         context = Product.objects.filter(seller=self.request.user)
         return context
+
+
+class CategoriesFilter(django_filters.FilterSet):
+    class Meta:
+        model = Product
+        fields = {
+            "category": ["exact"],
+        }
+
+
+class ProductCategoryFileteredView(FilterView):
+    template_name = "shop/home.html"
+    model = Product
+    context_object_name = "products"
+    filterset_class = CategoriesFilter

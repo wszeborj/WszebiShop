@@ -36,16 +36,17 @@
 
 
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
-            <ul class="dropdown-menu">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Categories
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 {% for category in categories %}
                 <li>
-                    <a class="dropdown-item" href="#">{{ category.name }}</a>
+                    <a class="dropdown-item" href="{% url 'shop:category-filtered-products' %}?category={{ category.id }}">{{ category.name }}</a>
                 </li>
                 {% endfor %}
             </ul>
           </li>
-
         </ul>
 
         <form role="search" class="mx-auto">
