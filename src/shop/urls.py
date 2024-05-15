@@ -11,6 +11,11 @@ urlpatterns = [
         views.ProductCategoryFileteredView.as_view(),
         name="category-filtered-products",
     ),
+    path(
+        "search-results/",
+        views.SearchResultView.as_view(),
+        name="search-results",
+    ),
     path("products/", views.ProductListView.as_view(), name="user-product-list"),
     path(
         "products/<int:pk>/", views.ProductDetailsView.as_view(), name="product-details"

@@ -1,5 +1,6 @@
 import django_filters
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 # from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -110,3 +111,16 @@ class ProductCategoryFileteredView(FilterView):
     model = Product
     context_object_name = "products"
     filterset_class = CategoriesFilter
+
+
+class SearchResultView(ListView):
+    template_name = "shop/home.html"
+    model = Product
+    context_object_name = "products"
+
+    def get_queryset(self):
+        query = self.request.GET.get("SearchByName")
+        products_list = Product.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )
+        return products_list
