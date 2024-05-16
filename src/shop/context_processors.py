@@ -2,7 +2,7 @@ from .models import Category
 
 
 def categories_processor(request):
-    categories = Category.objects.filter(parent__isnull=True)
+    categories = ["All products"] + list(Category.objects.filter(parent__isnull=True))
     context = {
         "categories": categories,
     }

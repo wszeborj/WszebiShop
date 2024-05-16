@@ -75,6 +75,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "shop.context_processors.categories_processor",
                 "carts.context_processors.cart_items_count_processor",
+                "django.template.context_processors.media",  # set this explicitly
             ],
         },
     },

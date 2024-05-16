@@ -57,6 +57,7 @@ class Image(models.Model):
         Product, on_delete=models.CASCADE, related_name="images"
     )
     image = models.ImageField(upload_to="product_images")
+    # thumbnail = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

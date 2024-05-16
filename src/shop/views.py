@@ -1,6 +1,7 @@
 import django_filters
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 # from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -14,7 +15,7 @@ from django.views.generic import (
 from django_filters.views import FilterView
 
 from .forms import ImageForm, ProductForm
-from .models import Product
+from .models import Category, Product
 
 
 class AllProductListView(ListView):
@@ -106,11 +107,20 @@ class CategoriesFilter(django_filters.FilterSet):
         }
 
 
-class ProductCategoryFileteredView(FilterView):
+class ProductCategoryFilteredView(FilterView):
     template_name = "shop/home.html"
     model = Product
     context_object_name = "products"
     filterset_class = CategoriesFilter
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.request.GET.get("category")
+        if category_id:
+            context["selected_category"] = get_object_or_404(Category, pk=category_id)
+        else:
+            context["selected_category"] = None
+        return context
 
 
 class SearchResultView(ListView):
