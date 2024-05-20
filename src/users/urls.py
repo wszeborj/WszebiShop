@@ -11,6 +11,7 @@ urlpatterns = [
         views.RegisterFormView.as_view(),
         name="register",
     ),
+    path("activate/<uidb64>/<token>", views.ActivateView.as_view(), name="activate"),
     path(
         "login/",
         auth_views.LoginView.as_view(template_name="users/login.html"),
