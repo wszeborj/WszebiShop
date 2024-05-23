@@ -20,6 +20,8 @@ class CartListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        ProductsProcessing.check_products_availability(request=self.request)
+
         context["total_price"] = sum(
             item.product.unit_price * item.quantity for item in context["cart_items"]
         )
@@ -92,15 +94,40 @@ class RemoveItem(View):
 
 class UpdateCart(View):
     def post(self, request, product_id):
+        cart_item = get_object_or_404(
+            CartItem, product_id=product_id, account=request.user
+        )
         form = CartUpdateForm(request.POST)
+
         if form.is_valid():
             quantity = form.cleaned_data["quantity"]
-            cart_item = get_object_or_404(CartItem, pk=product_id, account=request.user)
-            cart_item.quantity = int(quantity)
-            cart_item.save()
-            messages.success(request, "Quantity updated.")
-            if cart_item.quantity == 0:
-                cart_item.delete()
-                messages.success(request, "Quantity updated. Item removed")
-
+            product = cart_item.product
+            if quantity > product.in_stock:
+                messages.warning(request, f"Only {product.in_stock} items available")
+            else:
+                cart_item.quantity = int(quantity)
+                if cart_item.quantity == 0:
+                    cart_item.delete()
+                    messages.success(request, "Quantity updated. Item removed")
+                else:
+                    cart_item.save()
+                    messages.success(request, "Quantity updated.")
         return redirect("carts:cart-details")
+
+
+class ProductsProcessing:
+    @staticmethod
+    def check_products_availability(request, redirect_page=False):
+        cart_items = CartItem.objects.filter(account=request.user)
+        for item in cart_items:
+            if item.product.in_stock < item.quantity:
+                if redirect_page:
+                    return redirect("carts:cart-details")
+
+                messages.warning(
+                    request,
+                    f"The product {item.product.name} is not available in the requested quantity of {item.quantity}. "
+                    f"Available quantity: {item.product.in_stock}",
+                )
+                item.quantity = item.product.in_stock
+                item.save()

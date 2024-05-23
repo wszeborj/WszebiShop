@@ -29,8 +29,10 @@
             </div>
 
               <div class="col">
-              <form method="POST">
+              <form action="{% url 'carts:update-quantity' product_id=item.product.id %}" method="POST">
                 {% csrf_token %}
+{#                  <input type="hidden" name="product_id" value="{{ item.product.id }}" />#}
+
                 {{ update_quantity_form.as_p }}
                 <button type="submit" class="btn btn-outline-secondary btn-sm update-button">Update Quantity</button>
               </form>

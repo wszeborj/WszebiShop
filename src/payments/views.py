@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, View
 
 from carts.models import CartItem
+from carts.views import ProductsProcessing
 from orders.models import Address, Order, OrderItem, ShippingType
 from shop.models import Product
 from users.models import Account
@@ -22,6 +23,12 @@ class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
         # full_user_name = f"{self.request.user.first_name} {self.request.user.last_name}"
         account = self.request.user.id
+        should_redirect = ProductsProcessing.check_products_availability(
+            request=request, redirect_page=True
+        )
+        if should_redirect is not None:
+            return should_redirect
+
         address = request.POST.get("selected_shipping_address")
         shipping_type = request.POST.get("selected_shipping_type")
         total_price_with_shipping = float(
@@ -84,7 +91,6 @@ class CancelledView(TemplateView):
 
 @csrf_exempt
 def stripe_webhook(request):
-    print("CHECK")
     payload = request.body
     sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None
@@ -175,7 +181,6 @@ class OrderClassProcessing:
     def create_order(
         account: int, address: int, shipping_type: int, total_price_with_shipping: float
     ) -> int:
-        print("Creating order")
         buyer = Account.objects.get(pk=account)
         address = Address.objects.get(pk=address)
         shipping_type = ShippingType.objects.get(pk=shipping_type)

@@ -8,6 +8,7 @@ from django.views.generic import DetailView, FormView, ListView, View
 from django_filters.views import FilterView
 
 from carts.models import CartItem
+from carts.views import ProductsProcessing
 from shop.models import Product
 
 from .forms import AddressForm
@@ -26,6 +27,8 @@ class OrderConfirmationListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        ProductsProcessing.check_products_availability(request=self.request)
 
         total_price = sum(
             item.product.unit_price * item.quantity for item in context["cart_items"]
