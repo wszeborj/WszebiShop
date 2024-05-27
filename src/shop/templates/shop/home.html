@@ -22,8 +22,8 @@
           <div class="card shadow-sm">
 
           <a href="{{ product.get_absolute_url }}">
-            {% if product.first_image %}
-                <img class="img-fluid" alt="Responsive image" src="{{ product.first_image.url }}">
+            {% if product.get_thumbnail %}
+                <img class="img-fluid" alt="Responsive image" src="{{ product.get_thumbnail.url }}">
             {% else %}
                 <img class="img-fluid" alt="Default image" src="{{ MEDIA_URL }}no_image_available.jpg">
             {% endif %}
