@@ -1,4 +1,5 @@
 import django_filters
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -50,7 +51,6 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         product = form.save(commit=False)
         product.seller = self.request.user
-        product.save()
 
         images = self.request.FILES.getlist("image")
         for image_file in images:
@@ -59,6 +59,13 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
                 image = image_form.save(commit=False)
                 image.product = product
                 image.save()
+            else:
+                messages.warning(
+                    self.request, "Image too small, please select a larger image"
+                )
+                return self.form_invalid(form)
+
+        product.save()
         return super().form_valid(form)
 
 

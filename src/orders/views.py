@@ -135,3 +135,22 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     #     # order_items = OrderItem.objects.filter(order=self.object)
     #     # context["order_items"] = order_items
     #     return context
+
+
+class SalesFilter(django_filters.FilterSet):
+    class Meta:
+        model = Order
+        fields = {
+            "status": ["exact"],
+        }
+
+
+class SalesListView(LoginRequiredMixin, FilterView):
+    template_name = "orders/orders_list.html"
+    model = Order
+    context_object_name = "order_items"
+    ordering = ["-created_at"]
+    filterset_class = SalesFilter
+
+    def get_queryset(self) -> QuerySet[Order]:
+        return super().get_queryset().filter(buyer=self.request.user)

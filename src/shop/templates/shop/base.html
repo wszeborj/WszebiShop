@@ -25,7 +25,10 @@
             <a class="nav-link active" aria-current="page" href={% url 'users:profile-update' %}>Update Profile</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url "orders:orders-list" %}">Your Orders</a>
+            <a class="nav-link" href="{% url "orders:orders-list" %}">My Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "orders:sales-list" %}">My Sales</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url "shop:product-create" %}">Create Product</a>

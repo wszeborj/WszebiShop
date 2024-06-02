@@ -52,12 +52,13 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
-    buyer = models.ForeignKey(Account, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    shipping_type = models.ForeignKey(ShippingType, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(Account, on_delete=models.PROTECT)
+    address = models.ForeignKey(Address, on_delete=models.PROTECT)
+    shipping_type = models.ForeignKey(ShippingType, on_delete=models.PROTECT)
     total_price_with_shipping = models.DecimalField(
         default=0.00, decimal_places=2, max_digits=100
     )
+    # seller = models.ForeignKey(Account, on_delete=models.CASCADE)
     # tracking_number = ...
 
     def get_absolute_url(self):
