@@ -40,13 +40,7 @@ INSTALLED_APPS = [
     "django_filters",
 ]
 
-INSTALLED_EXTENSIONS = [
-    "shop",
-    "users",
-    "carts",
-    "orders",
-    "payments",
-]
+INSTALLED_EXTENSIONS = ["shop", "users", "carts", "orders", "payments", "dashboards"]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
