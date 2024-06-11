@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "bootstrap_datepicker_plus",
     "django_filters",
+    "django_plotly_dash.apps.DjangoPlotlyDashConfig",
 ]
 
 INSTALLED_EXTENSIONS = ["shop", "users", "carts", "orders", "payments", "dashboards"]
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_plotly_dash.middleware.BaseMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -153,3 +155,5 @@ EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
+
+X_FRAME_OPTIONS = "SAMEORIGIN"

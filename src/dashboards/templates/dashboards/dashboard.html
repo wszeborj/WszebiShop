@@ -1,0 +1,68 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load plotly_dash %}
+{% block title %}YDashboards{% endblock %}
+<head>
+    <style>
+    .sidebar-sticky {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 48px);
+      padding-top: .5rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .nav-link.active {
+      color: #007bff;
+    }
+    .fa, .fas {
+      margin-right: 10px;
+    }
+
+
+
+  </style>
+</head>
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+        <div class="position-sticky pt-3 sidebar-sticky">
+          <ul class="nav flex-column">
+            <!-- Place to add page titles in the sidebar -->
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'dashboards:admin-dashboard-list' %}">
+                <i class="fa fa-home"></i>
+                Dashboard
+              </a>
+            </li>
+{#            <li class="nav-item">#}
+{#              <a class="nav-link" href="{% url 'dashboards:dashboard-orders-list' %}">#}
+{#                <i class="fa fa-file"></i>#}
+{#                Daily Orders#}
+{#              </a>#}
+{#            </li>#}
+          </ul>
+        </div>
+      </nav>
+
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+{#          <h1 class="h2">Dashboard</h1>#}
+        </div>
+
+        <!-- Place to add the Plotly chart -->
+      <div class="dashboard-container">
+        <div class="dash-content">
+          {% plotly_app name="GenericDash" ratio=1 %}
+        </div>
+      </div>
+
+      </main>
+    </div>
+  </div>
+
+
+{% endblock %}
