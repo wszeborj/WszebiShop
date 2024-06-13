@@ -13,6 +13,7 @@ from shop.models import Product
 
 from .forms import AddressForm
 from .models import Address, Order, ShippingType
+from .utils import clean_empty_orders
 
 
 class OrderConfirmationListView(LoginRequiredMixin, ListView):
@@ -119,6 +120,7 @@ class OrderListView(LoginRequiredMixin, FilterView):
     filterset_class = OrderFilter
 
     def get_queryset(self) -> QuerySet[Order]:
+        clean_empty_orders()
         return super().get_queryset().filter(buyer=self.request.user)
 
 
