@@ -164,4 +164,8 @@ class SalesListView(LoginRequiredMixin, FilterView):
     filterset_class = SalesFilter
 
     def get_queryset(self) -> QuerySet[Order]:
-        return super().get_queryset().filter(buyer=self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(order_items__product__seller=self.request.user)
+        )
