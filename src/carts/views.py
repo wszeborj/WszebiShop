@@ -29,6 +29,14 @@ class CartListView(ListView):
         update_quantity_form = CartUpdateForm()
         context["update_quantity_form"] = update_quantity_form
 
+        sellers = set(item.product.seller for item in context["cart_items"])
+        context["one_seller"] = len(sellers) == 1
+        if not context["one_seller"]:
+            messages.warning(
+                self.request,
+                "To proceed to order you can have only products from the same seller.",
+            )
+
         return context
 
 

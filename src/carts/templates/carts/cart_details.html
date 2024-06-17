@@ -23,6 +23,7 @@
           <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-reset">
             <h1 class="h5 pt-2">{{ item.product.name }}  ({{ item.product_id }})</h1>
           </a>
+              Seller: {{ item.product.seller }}
 
             <div class="row p-3">
               <div class="col-6 text-start"><span class="h6 fw-bold">Price per unit: {{ item.product.unit_price }} zł</span></div>
@@ -91,9 +92,15 @@
       Remove all
     </button>
   </form>
-    <a class="btn btn-outline-secondary btn-sm" href="{% url 'orders:order-confirmation' %}">
+    <a class="btn btn-outline-secondary btn-sm {% if not one_seller %}disabled{% endif %}"
+       href="{% url 'orders:order-confirmation' %}">
         Go to order
     </a>
+    {% if not one_seller %}
+    <div class="alert alert-warning mt-2" role="alert">
+        To proceed to order you can have only products from the same seller.
+    </div>
+    {% endif %}
 </div>
     </div>
 

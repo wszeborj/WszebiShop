@@ -62,6 +62,15 @@ class OrderConfirmationListView(LoginRequiredMixin, ListView):
         context["selected_shipping_address"] = address
         context["total_price_with_shipping"] = total_price_with_shipping
 
+        context["one_seller"] = True
+        sellers = set(item.product.seller for item in context["cart_items"])
+        if len(sellers) > 1:
+            messages.warning(
+                self.request,
+                "You can only place an order with products from the same seller.",
+            )
+            context["one_seller"] = False
+
         return context
 
 

@@ -134,8 +134,14 @@
                                name="selected_shipping_type"
                                value="{{ selected_shipping_type.id }}">
                         <button type="submit" class="btn btn-primary btn-lg"
-                                {% if not selected_shipping_address.id %}disabled{% endif %}>
-                            Proceed to Payment</button>
+                                {% if not selected_shipping_address.id or not one_seller %}disabled{% endif %}>
+                            Proceed to Payment
+                        </button>
+                    {% if not one_seller %}
+                        <div class="alert alert-warning mt-2" role="alert">
+                        To proceed to payment you can have only products from the same seller.
+                        </div>
+                    {% endif %}
                     </form>
                 </div>
             </div>
