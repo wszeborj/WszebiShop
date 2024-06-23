@@ -1,7 +1,7 @@
 import django_filters
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, FormView, ListView, View
@@ -13,7 +13,6 @@ from shop.models import Product
 
 from .forms import AddressForm
 from .models import Address, Order, ShippingType
-from .utils import clean_empty_orders
 
 
 class OrderConfirmationListView(LoginRequiredMixin, ListView):
@@ -129,7 +128,6 @@ class OrderListView(LoginRequiredMixin, FilterView):
     filterset_class = OrderFilter
 
     def get_queryset(self) -> QuerySet[Order]:
-        clean_empty_orders()
         return super().get_queryset().filter(buyer=self.request.user)
 
 
@@ -138,14 +136,29 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = "orders/order_detail.html"
     context_object_name = "order"
 
-    def get_queryset(self):
-        return super().get_queryset().filter(buyer=self.request.user)
+    def get(self, request, *args, **kwargs):
+        print("Test")
+        return super().get(request, *args, **kwargs)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # order_items = OrderItem.objects.filter(order=self.object)
-    #     # context["order_items"] = order_items
-    #     return context
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                Q(buyer=self.request.user)
+                | Q(order_items__product__seller=self.request.user)
+            )
+            .order_by("-id")
+            .distinct("id")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order = self.get_object()
+        context["is_seller"] = order.order_items.filter(
+            product__seller=self.request.user
+        ).exists()
+        return context
 
 
 class SalesFilter(django_filters.FilterSet):
@@ -168,4 +181,13 @@ class SalesListView(LoginRequiredMixin, FilterView):
             super()
             .get_queryset()
             .filter(order_items__product__seller=self.request.user)
+            .order_by("-id")
+            .distinct("id")
         )
+
+
+class UpdateOrderStatus(View):
+    def post(self, request, order_id):
+        order_shipping_status = request.POST.get("order_shipping_status")
+        Order.objects.filter(pk=order_id).update(shipping_status=order_shipping_status)
+        return redirect("orders:order-details", pk=order_id)

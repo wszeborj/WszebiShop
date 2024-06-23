@@ -76,6 +76,7 @@ class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
                 },
             )
         except Exception as e:
+            Order.objects.get(pk=order_id).delete()
             print(str(e))
 
         return redirect(checkout_session.url, code=303)
@@ -148,6 +149,7 @@ def stripe_webhook(request):
             order_id=order_id, status=Order.OrderStatus.UNPAID
         )
         OrderClassProcessing.email_customer_about_failed_payment(order_id=order_id)
+        Order.objects.get(pk=order_id).delete()
 
         # Passed signature verification
     return HttpResponse(status=200)

@@ -81,5 +81,27 @@
                 <div id="subtotal" class="d-inline-flex">{{ order.shipping_status }}.</div>
                 </div>
             </div>
+           {% if is_seller %}
+           <hr>
+            <div class="row">
+                <div class="col-12 text-center mb-3">
+                    <p>As a seller you can change status of shipment:</p>
+                    <form action="{% url 'orders:order-update-status' order_id=order.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" name="order_shipping_status" value="IN_PREPARATION"
+                                class="btn btn-success">IN_PREPARATION</button>
+                        <button type="submit" name="order_shipping_status" value="WAITING_FOR_SHIPMENT"
+                                class="btn btn-info">WAITING_FOR_SHIPMENT</button>
+                        <button type="submit" name="order_shipping_status" value="SHIPPED"
+                                class="btn btn-warning">SHIPPED</button>
+                        <button type="submit" name="order_shipping_status" value="DELIVERED"
+                                class="btn btn-danger">DELIVERED</button>
+                        <button type="submit" name="order_shipping_status" value="CLOSED"
+                                class="btn btn-secondary">CLOSED</button>
+                    </form>
+                </div>
+            </div>
+
+            {% endif %}
     </main>
 {% endblock %}

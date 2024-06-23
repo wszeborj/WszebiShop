@@ -42,6 +42,8 @@ class Order(models.Model):
 
     class OrderShippingStatus(models.TextChoices):
         NEW = "NEW", "NEW"
+        IN_PREPARATION = "IN_PREPARATION", "IN_PREPARATION"
+        WAITING_FOR_SHIPMENT = "WAITING_FOR_SHIPMENT", "WAITING_FOR_SHIPMENT"
         SHIPPED = "SHIPPED", "SHIPPED"
         DELIVERED = "DELIVERED", "DELIVERED"
         CLOSED = "CLOSED", "CLOSED"
