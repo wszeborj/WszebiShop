@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import environ
+import sentry_sdk
 
 from .env import env
 
@@ -157,3 +158,9 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
+
+sentry_sdk.init(
+    dsn=env("SENTRY_DSN"),
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+)
