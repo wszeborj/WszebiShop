@@ -8,8 +8,8 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = "__all__"
-        # exclude = ["seller"]
-        # widgets = {"description": forms.Textarea(attrs={"cols": 80, "rows": 5})}
+        exclude = ["seller"]
+        widgets = {"description": forms.Textarea(attrs={"cols": 80, "rows": 5})}
 
     # def __init__(self, *args, **kwargs):
     #     super(ProductForm, self).__init__(*args, **kwargs)

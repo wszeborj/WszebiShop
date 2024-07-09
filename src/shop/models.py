@@ -11,6 +11,7 @@ from users.models import Account
 class Category(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255, null=True, blank=True)
+    # todo: wyrzucic parent
     parent = models.ForeignKey(
         "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
     )
@@ -35,7 +36,7 @@ class Product(models.Model):
     sold = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    special_offer = models.BooleanField()
+    special_offer = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     seller = models.ForeignKey(Account, on_delete=models.CASCADE)
 

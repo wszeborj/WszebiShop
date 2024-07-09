@@ -1,6 +1,7 @@
 import django_filters
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
@@ -51,22 +52,28 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         product = form.save(commit=False)
         product.seller = self.request.user
-
         images = self.request.FILES.getlist("image")
+
         for image_file in images:
             image_form = ImageForm(files={"image": image_file})
-            if image_form.is_valid():
-                image = image_form.save(commit=False)
-                image.product = product
-                image.save()
-            else:
+            if not image_form.is_valid():
                 messages.warning(
                     self.request, "Image too small, please select a larger image"
                 )
                 return self.form_invalid(form)
 
         product.save()
+        for image_file in images:
+            image_form = ImageForm(files={"image": image_file})
+            image = image_form.save(commit=False)
+            image.product = product
+            image.save()
+
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)
 
 
 class UpdateProductView(LoginRequiredMixin, UpdateView):
@@ -74,17 +81,31 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
     form_class = ProductForm
     model = Product
     success_url = reverse_lazy("shop:user-product-list")
-
-    # def get_object(self, queryset=None):
-    #     return get_object_or_404(Product, pk=self.kwargs.get('pk'))
     #
-    # def get_initial(self):
-    #     initial = super(UpdateProductView, self).get_initial()
+    # def form_valid(self, form):
+    #     images = self.request.FILES.getlist("image")
     #
-    #     obj = self.get_object()
-    #     initial['name'] = obj.name
+    #     for image_file in images:
+    #         image_form = ImageForm(files={"image": image_file})
+    #         if not image_form.is_valid():
+    #             messages.warning(self.request, "Image too small, please select a larger image")
+    #             return self.form_invalid(form)
     #
-    #     return initial
+    #     with transaction.atomic():
+    #         product = form.save(commit=False)
+    #         product.save()
+    #
+    #         if images:
+    #             product.images.all().delete()
+    #
+    #             for image_file in images:
+    #                 image_form = ImageForm(files={"image": image_file})
+    #                 if image_form.is_valid():
+    #                     image = image_form.save(commit=False)
+    #                     image.product = product
+    #                     image.save()
+    #
+    #     return super().form_valid(form)
 
 
 class DeleteProductView(LoginRequiredMixin, DeleteView):

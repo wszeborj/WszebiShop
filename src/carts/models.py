@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.urls import reverse_lazy
 
@@ -18,5 +20,5 @@ class CartItem(models.Model):
         return reverse_lazy("carts:cart_details")
 
     @property
-    def total_product_cost(self):
+    def total_product_cost(self) -> Decimal:
         return self.quantity * self.product.unit_price
