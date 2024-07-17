@@ -1,1 +1,2 @@
-exclude_dirs: ['src\shop\management\commands\populate_db.py',]
+exclude_dirs: ['src\shop\management\commands\populate_db.py',
+               'tests\', '*\tests\']
