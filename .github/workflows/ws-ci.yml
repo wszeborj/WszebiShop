@@ -61,10 +61,10 @@ jobs:
       continue-on-error: true # TODO remove later
     - name: Run Bandit
       run: |
-        bandit src -c bandit.yaml
+        bandit -r src -c bandit.yaml
     - name: Run Ruff
       run: |
-        ruff src
+        ruff check src
     - name: Run Safety
       run: |
         safety check
