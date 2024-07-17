@@ -75,3 +75,6 @@ urllib3==2.2.1
 virtualenv==20.25.1
 Werkzeug==3.0.3
 zipp==3.19.2
+ruff==0.5.2
+safety==3.2.4
+bandit==1.7.9
