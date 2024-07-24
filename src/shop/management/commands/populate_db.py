@@ -24,11 +24,17 @@ class Command(BaseCommand):
 
     def create_super_user(self):
         User = get_user_model()
+        admin_password = os.environ.get("DJANGO_ADMIN_PASSWORD")
+
+        if not admin_password:
+            self.style.write(
+                self.style.ERROR("DJANGO_ADMIN_PASSWORD env variable not set")
+            )
 
         user = User.objects.create_superuser(
             username="admin",
             email="admin@admin.com",
-            password="admin",
+            password=admin_password,
             phone="123456789",
             birth_date=datetime.fromisoformat("1990-12-04"),
             status="ACTIVE",
