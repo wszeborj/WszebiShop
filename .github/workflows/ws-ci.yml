@@ -58,10 +58,11 @@ jobs:
         EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
         EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        DJANGO_ADMIN_PASSWORD: ${{ secrets.DJANGO_ADMIN_PASSWORD }}
       continue-on-error: true # TODO remove later
     - name: Run Bandit
       run: |
-        bandit -r src -c bandit.yaml
+        bandit -c bandit.yaml -r src
     - name: Run Ruff
       run: |
         ruff check src
