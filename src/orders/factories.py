@@ -12,6 +12,25 @@ from .models import Address, Order, OrderItem, ShippingType
 
 fake = Faker()
 
+POLISH_STATES = [
+    "Dolnośląskie",
+    "Kujawsko-Pomorskie",
+    "Lubelskie",
+    "Lubuskie",
+    "Łódzkie",
+    "Małopolskie",
+    "Mazowieckie",
+    "Opolskie",
+    "Podkarpackie",
+    "Podlaskie",
+    "Pomorskie",
+    "Śląskie",
+    "Świętokrzyskie",
+    "Warmińsko-Mazurskie",
+    "Wielkopolskie",
+    "Zachodniopomorskie",
+]
+
 
 class AddressFactory(DjangoModelFactory):
     class Meta:
@@ -24,8 +43,8 @@ class AddressFactory(DjangoModelFactory):
     phone = factory.Faker("phone_number", locale="pl_PL")
     city = factory.Faker("city", locale="pl_PL")
     postal_code = factory.Faker("postcode", locale="pl_PL")
-    state = random.choice(["swietokrzyskie", ...])  # todo zrobic liste wojewodztw
-    country = factory.Faker("country", locale="pl_PL")
+    state = random.choice(POLISH_STATES)
+    country = "Polska"
     created_at = factory.LazyAttribute(lambda _: fake.past_date())
 
 

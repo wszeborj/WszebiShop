@@ -19,7 +19,6 @@ class CategoryFactory(DjangoModelFactory):
 
     name = factory.Faker("word")
     description = factory.Faker("sentence")
-    # parent = factory.SubFactory(Category)
 
 
 class ProductFactory(DjangoModelFactory):

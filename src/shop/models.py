@@ -9,11 +9,12 @@ from users.models import Account
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=255, null=True, blank=True)
-    # todo: wyrzucic parent
-    parent = models.ForeignKey(
-        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
+    name = models.CharField(max_length=50, help_text="Name of the product category.")
+    description = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Description of the product category.",
     )
 
     def __str__(self):
@@ -23,22 +24,48 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     def get_absolute_url(self):
-        return reverse("category_list", args=[self.parent])
+        return reverse("category_list", args=[self.pk])
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=255)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    unit = models.CharField(max_length=10)
-    unit_price = models.DecimalField(default=0.00, decimal_places=2, max_digits=100)
-    in_stock = models.IntegerField()
-    sold = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    special_offer = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    seller = models.ForeignKey(Account, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, help_text="Name of the product.")
+    description = models.CharField(
+        max_length=255, help_text="Description of the product."
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        help_text="Category to which the product belongs.",
+    )
+    unit = models.CharField(
+        max_length=10,
+        help_text="Unit of measurement for the product (e.g., kg, piece).",
+    )
+    unit_price = models.DecimalField(
+        default=0.00,
+        decimal_places=2,
+        max_digits=100,
+        help_text="Unit price of the product.",
+    )
+    in_stock = models.IntegerField(
+        help_text="Quantity of the product available in stock."
+    )
+    sold = models.IntegerField(default=0, help_text="Number of units sold.")
+    created_at = models.DateTimeField(
+        auto_now_add=True, help_text="Time when the product was created."
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, help_text="Time when the product was last updated."
+    )
+    special_offer = models.BooleanField(
+        default=False, help_text="Is the product on special offer?"
+    )
+    is_active = models.BooleanField(
+        default=True, help_text="Is the product active and visible?"
+    )
+    seller = models.ForeignKey(
+        Account, on_delete=models.CASCADE, help_text="User account of the seller."
+    )
 
     def __str__(self):
         return f"{self.name} ({self.id})"
@@ -65,11 +92,20 @@ class Product(models.Model):
 
 class Image(models.Model):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="images"
+        Product,
+        on_delete=models.CASCADE,
+        related_name="images",
+        help_text="Product associated with the image.",
     )
-    image = models.ImageField(upload_to="product_images")
-    thumbnail = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(
+        upload_to="product_images", help_text="Image of the product."
+    )
+    thumbnail = models.BooleanField(
+        default=False, help_text="Is this image the thumbnail for the product?"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, help_text="Time when the image was created."
+    )
 
     def save(self, *args, **kwargs):
         if not self.product.images.filter(thumbnail=True).exists():

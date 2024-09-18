@@ -37,19 +37,32 @@ class DashData:
         df_daily_orders = DashData.get_daily_order_items()
         df_daily_order_items = DashData.get_daily_order_items()
         df_daily_payments = DashData.get_daily_payments()
-        combined_df = pd.merge(
-            df_daily_orders, df_daily_order_items, on="created_at__date", how="outer"
-        )
-        combined_df = pd.merge(
-            combined_df, df_daily_payments, on="created_at__date", how="outer"
-        )
+        if OrderItem.objects.count() > 0:
+            combined_df = pd.merge(
+                df_daily_orders,
+                df_daily_order_items,
+                on="created_at__date",
+                how="outer",
+            )
+            combined_df = pd.merge(
+                combined_df, df_daily_payments, on="created_at__date", how="outer"
+            )
 
-        combined_df = combined_df.fillna(0)
-        combined_df.columns = [
-            "created_at__date",
-            "order_count",
-            "total_quantity",
-            "total_payment",
-        ]
+            combined_df = combined_df.fillna(0)
+            combined_df.columns = [
+                "created_at__date",
+                "order_count",
+                "total_quantity",
+                "total_payment",
+            ]
 
-        return combined_df
+            return combined_df
+
+        return pd.DataFrame(
+            columns=[
+                "created_at__date",
+                "order_count",
+                "total_quantity",
+                "total_payment",
+            ]
+        )

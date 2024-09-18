@@ -186,7 +186,7 @@ class SalesListView(LoginRequiredMixin, FilterView):
         )
 
 
-class UpdateOrderStatus(View):
+class UpdateOrderStatus(LoginRequiredMixin, View):
     def post(self, request, order_id):
         order_shipping_status = request.POST.get("order_shipping_status")
         Order.objects.filter(pk=order_id).update(shipping_status=order_shipping_status)

@@ -9,7 +9,6 @@ from icecream import ic
 from PIL import Image as PilImage
 
 from shop.models import Category, Image, Product
-from users.models import Account
 
 
 class TestShopViews(TestCase):
@@ -75,7 +74,7 @@ class TestShopViews(TestCase):
         self.assertEquals(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "shop/product-details.html")
 
-    # @tag('x')
+    @tag("z")
     def test_product_create_POST_no_image(self):
         response = self.client.post(
             self.product_create_url,

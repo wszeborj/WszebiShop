@@ -21,6 +21,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
 ALLOWED_HOSTS = ["*"]
 
 
@@ -42,7 +45,14 @@ INSTALLED_APPS = [
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
 ]
 
-INSTALLED_EXTENSIONS = ["shop", "users", "carts", "orders", "payments", "dashboards"]
+INSTALLED_EXTENSIONS = [
+    "shop",
+    "users",
+    "carts",
+    "orders",
+    "payments",
+    "dashboards",
+]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
@@ -149,15 +159,15 @@ STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
 
 # if env('DEBUG'):
 # EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
 # else:
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
-X_FRAME_OPTIONS = "SAMEORIGIN"
 
 sentry_sdk.init(
     dsn=env("SENTRY_DSN"),

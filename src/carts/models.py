@@ -8,10 +8,22 @@ from users.models import Account
 
 
 class CartItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=0)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        help_text="Product associated with the cart item.",
+    )
+    quantity = models.PositiveIntegerField(
+        default=0, help_text="Quantity of the product in the cart."
+    )
+    account = models.ForeignKey(
+        Account,
+        on_delete=models.CASCADE,
+        help_text="User account owning this cart item.",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, help_text="Time when the cart item was created."
+    )
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"

@@ -24,25 +24,7 @@ class RegisterFormView(FormView):
         account.is_active = False
         account.save()
 
-        current_site = get_current_site(self.request)
-        subject = "Activation link to your account on Wszebishop"
-        message = render_to_string(
-            template_name="users/account_activation_email.html",
-            context={
-                "account": account,
-                "domain": current_site,
-                "uid": urlsafe_base64_encode(force_bytes(account.pk)),
-                "token": default_token_generator.make_token(account),
-            },
-        )
-        recipient_mail = form.cleaned_data.get("email")
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email="no_reply@wszebiszop.pl",
-            recipient_list=[recipient_mail],
-            fail_silently=False,
-        )
+        UserProcessing.send_activation_mail(request=self.request, account=account)
 
         messages.success(
             self.request,
@@ -54,7 +36,7 @@ class RegisterFormView(FormView):
     def form_invalid(self, form):
         messages.warning(
             self.request,
-            "Something went wrong! Check your email and try again.",
+            "Something went wrong! Check your email and password and try again.",
         )
         return super().form_invalid(form)
 
@@ -63,7 +45,6 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "users/profile.html"
     form_class = ProfileUpdateForm
     success_url = reverse_lazy("users:profile-update")
-    # queryset = Account.objects.all()
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -90,4 +71,28 @@ class ActivateView(View):
             return redirect("users:login")
         else:
             messages.warning(request, "Activation link is invalid!")
-            return redirect("home")
+            return redirect("shop:all-product-list")
+
+
+class UserProcessing:
+    @staticmethod
+    def send_activation_mail(request, account):
+        current_site = get_current_site(request)
+        subject = "Activation link to your account on Wszebishop"
+        message = render_to_string(
+            template_name="users/account_activation_email.html",
+            context={
+                "account": account,
+                "domain": current_site,
+                "uid": urlsafe_base64_encode(force_bytes(account.pk)),
+                "token": default_token_generator.make_token(account),
+            },
+        )
+        recipient_mail = account.email
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email="no_reply@wszebiszop.pl",
+            recipient_list=[recipient_mail],
+            fail_silently=False,
+        )

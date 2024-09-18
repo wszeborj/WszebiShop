@@ -51,7 +51,6 @@ class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
         try:
             checkout_session = stripe.checkout.Session.create(
                 customer_email=self.request.user.email,
-                # customer_name=full_user_name,
                 payment_method_types=["card"],
                 mode="payment",
                 line_items=[
@@ -90,27 +89,37 @@ class CancelledView(TemplateView):
     template_name = "payments/payment_cancel.html"
 
 
-@csrf_exempt
-def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-    event = None
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-        )
-    except ValueError:
-        # Invalid payload
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError:
-        # Invalid signature
-        return HttpResponse(status=400)
+# def process_completed_session():
+#     OrderClassProcessing.change_payment_status(
+#         order_id=order_id, status=Order.OrderStatus.AWAITING_PAYMENT
+#     )
+#     print("checkout session completed")
+#
+#     # Check if the order is already paid (for example, from a card payment)
+#     #
+#     # A delayed notification payment will have an `unpaid` status, as
+#     # you're still waiting for funds to be transferred from the customer's
+#     # account.
+#     if session.payment_status == "paid":
+#         # Fulfill the purchase
+#         print("session.payment_status paid")
+#         order_id = int(session["metadata"].order_id)
+#         OrderClassProcessing.change_payment_status(
+#             order_id=order_id, status=Order.OrderStatus.PAID
+#         )
+#         OrderClassProcessing.fulfill_order(order_id)
 
+
+def process_webhook_event(event):
     # Handle the checkout.session.completed event
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
+        print(f"{type(session)=}")
+        print(f"{session=}")
         order_id = int(session["metadata"].order_id)
         # Save an order in your database, marked as 'awaiting payment'
+
+        # process_complated_session()
         OrderClassProcessing.change_payment_status(
             order_id=order_id, status=Order.OrderStatus.AWAITING_PAYMENT
         )
@@ -152,6 +161,37 @@ def stripe_webhook(request):
         Order.objects.get(pk=order_id).delete()
 
         # Passed signature verification
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    print(f"{type(payload)=}")
+    print(f"{payload=}")
+    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+    print(f"{type(sig_header)=}")
+    print(f"{sig_header=}")
+    event = None
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )  # tutaj mock @patch('stripe.Webhook.construct_event')
+    except ValueError:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError:
+        # Invalid signature
+        return HttpResponse(status=400)
+    print(f"{type(event)=}")
+    print(f"{event=}")
+    print(f"{event.type=}")
+    print(f"{event.data=}")
+    try:
+        process_webhook_event(event)
+    except Exception as e:
+        print(e)
+        return HttpResponse(status=400)
+
     return HttpResponse(status=200)
 
 
@@ -198,7 +238,7 @@ class OrderClassProcessing:
         return order.id
 
     @staticmethod
-    def change_payment_status(order_id: int, status: Order.OrderStatus):
+    def change_payment_status(order_id: int, status: Order.OrderStatus) -> None:
         Order.objects.filter(pk=order_id).update(status=status)
 
     @staticmethod

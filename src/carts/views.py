@@ -9,7 +9,7 @@ from .forms import CartUpdateForm
 from .models import CartItem
 
 
-class CartListView(ListView):
+class CartListView(LoginRequiredMixin, ListView):
     template_name = "carts/cart_details.html"
     model = CartItem
     context_object_name = "cart_items"
@@ -65,7 +65,7 @@ class AddToCart(LoginRequiredMixin, View):
         return redirect("carts:cart-details")
 
 
-class RemoveFromCart(View):
+class RemoveFromCart(LoginRequiredMixin, View):
     def post(self, request, product_id, quantity=1):
         product = get_object_or_404(Product, pk=product_id)
         cart_item = CartItem.objects.get(product=product, account=request.user)
@@ -90,7 +90,7 @@ class RemoveAll(LoginRequiredMixin, View):
         return redirect("carts:cart-details")
 
 
-class RemoveItem(View):
+class RemoveItem(LoginRequiredMixin, View):
     def post(self, request, product_id):
         product = get_object_or_404(Product, pk=product_id)
         cart_item = CartItem.objects.get(product=product, account=request.user)
@@ -100,7 +100,7 @@ class RemoveItem(View):
         return redirect("carts:cart-details")
 
 
-class UpdateCart(View):
+class UpdateCart(LoginRequiredMixin, View):
     def post(self, request, product_id):
         cart_item = get_object_or_404(
             CartItem, product_id=product_id, account=request.user
