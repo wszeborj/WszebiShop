@@ -12,11 +12,4 @@ class AccountAdmin(admin.ModelAdmin):
         "email",
         "birth_date",
         "phone",
-        "status",
-    ]
-    list_filter = [
-        "status",
-    ]
-    list_editable = [
-        "status",
     ]

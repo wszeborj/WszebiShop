@@ -1,5 +1,4 @@
 from django import forms
-from PIL import Image as PilImage
 
 from .models import Image, Product
 
@@ -21,10 +20,8 @@ class ProductForm(forms.ModelForm):
 
 
 def validate_image(image):
-    print("validate_image")
     try:
-        img = PilImage.open(image)
-        width, height = img.size
+        width, height = image.image.size
         if width < 333 or height < 500:
             raise forms.ValidationError(f"{width}x{height} is too small")
     except Exception as e:

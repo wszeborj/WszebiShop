@@ -21,7 +21,6 @@ YOUR_DOMAIN = "https://wszebishop.pl"
 
 class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
-        # full_user_name = f"{self.request.user.first_name} {self.request.user.last_name}"
         account = self.request.user.id
         should_redirect = ProductsProcessing.check_products_availability(
             request=request, redirect_page=True
@@ -58,9 +57,9 @@ class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
                         "price_data": {
                             "currency": "pln",
                             "unit_amount": total_price_for_checkout,
-                            "product_data": {"name": "t-shirt", "description": "xyz"},
+                            # "product_data": {"name": "t-shirt", "description": "xyz"},
                         },
-                        "quantity": 1,
+                        # "quantity": 1,
                     }
                 ],
                 success_url=domain + "/payments/success/",
@@ -89,62 +88,29 @@ class CancelledView(TemplateView):
     template_name = "payments/payment_cancel.html"
 
 
-# def process_completed_session():
-#     OrderClassProcessing.change_payment_status(
-#         order_id=order_id, status=Order.OrderStatus.AWAITING_PAYMENT
-#     )
-#     print("checkout session completed")
-#
-#     # Check if the order is already paid (for example, from a card payment)
-#     #
-#     # A delayed notification payment will have an `unpaid` status, as
-#     # you're still waiting for funds to be transferred from the customer's
-#     # account.
-#     if session.payment_status == "paid":
-#         # Fulfill the purchase
-#         print("session.payment_status paid")
-#         order_id = int(session["metadata"].order_id)
-#         OrderClassProcessing.change_payment_status(
-#             order_id=order_id, status=Order.OrderStatus.PAID
-#         )
-#         OrderClassProcessing.fulfill_order(order_id)
-
-
 def process_webhook_event(event):
-    # Handle the checkout.session.completed event
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        print(f"{type(session)=}")
-        print(f"{session=}")
         order_id = int(session["metadata"].order_id)
-        # Save an order in your database, marked as 'awaiting payment'
 
-        # process_complated_session()
-        OrderClassProcessing.change_payment_status(
+        OrderClassProcessing.change_order_payment_status(
             order_id=order_id, status=Order.OrderStatus.AWAITING_PAYMENT
         )
-        print("checkout session completed")
 
-        # Check if the order is already paid (for example, from a card payment)
-        #
-        # A delayed notification payment will have an `unpaid` status, as
-        # you're still waiting for funds to be transferred from the customer's
-        # account.
         if session.payment_status == "paid":
             # Fulfill the purchase
             print("session.payment_status paid")
             order_id = int(session["metadata"].order_id)
-            OrderClassProcessing.change_payment_status(
+            OrderClassProcessing.change_order_payment_status(
                 order_id=order_id, status=Order.OrderStatus.PAID
             )
             OrderClassProcessing.fulfill_order(order_id)
 
     elif event["type"] == "checkout.session.async_payment_succeeded":
         session = event["data"]["object"]
-        print("checkout.session.async_payment_succeeded")
-        # Fulfill the purchase
         order_id = int(session["metadata"].order_id)
-        OrderClassProcessing.change_payment_status(
+
+        OrderClassProcessing.change_order_payment_status(
             order_id=order_id, status=Order.OrderStatus.PAID
         )
         OrderClassProcessing.fulfill_order(order_id=order_id)
@@ -152,40 +118,27 @@ def process_webhook_event(event):
     elif event["type"] == "checkout.session.async_payment_failed":
         session = event["data"]["object"]
         print("checkout.session.async_payment_failed")
-        # Send an email to the customer asking them to retry their order
         order_id = int(session["metadata"].order_id)
-        OrderClassProcessing.change_payment_status(
+        OrderClassProcessing.change_order_payment_status(
             order_id=order_id, status=Order.OrderStatus.UNPAID
         )
         OrderClassProcessing.email_customer_about_failed_payment(order_id=order_id)
         Order.objects.get(pk=order_id).delete()
 
-        # Passed signature verification
-
 
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-    print(f"{type(payload)=}")
-    print(f"{payload=}")
     sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-    print(f"{type(sig_header)=}")
-    print(f"{sig_header=}")
     event = None
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-        )  # tutaj mock @patch('stripe.Webhook.construct_event')
+        )
     except ValueError:
-        # Invalid payload
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError:
-        # Invalid signature
         return HttpResponse(status=400)
-    print(f"{type(event)=}")
-    print(f"{event=}")
-    print(f"{event.type=}")
-    print(f"{event.data=}")
     try:
         process_webhook_event(event)
     except Exception as e:
@@ -234,12 +187,22 @@ class OrderClassProcessing:
             shipping_type=shipping_type,
             total_price_with_shipping=total_price_with_shipping,
         )
+        Payment.objects.create(
+            user=buyer,
+            price=total_price_with_shipping,
+            order=order.id,
+            state=Payment.State.NEW,
+        )
 
         return order.id
 
     @staticmethod
-    def change_payment_status(order_id: int, status: Order.OrderStatus) -> None:
+    def change_order_payment_status(order_id: int, status: Order.OrderStatus) -> None:
         Order.objects.filter(pk=order_id).update(status=status)
+
+    @staticmethod
+    def change_payment_state(payment_id: int, state: Payment.State) -> None:
+        Payment.objects.filter(pk=payment_id).update(state=state)
 
     @staticmethod
     def create_payment(order):

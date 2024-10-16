@@ -23,10 +23,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("shop.urls", namespace="shop")),
     path("carts/", include("carts.urls")),
-    path("dashboards/", include("dashboards.urls")),
     path("orders/", include("orders.urls")),
     path("payments/", include("payments.urls")),
     path("users/", include("users.urls")),
+    # path("dashboards/", include("dashboards.urls")),
     path("django_plotly_dash/", include("django_plotly_dash.urls")),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

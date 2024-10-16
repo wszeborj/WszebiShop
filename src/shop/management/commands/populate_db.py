@@ -5,12 +5,14 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core.files import File
 from django.core.management.base import BaseCommand
+from django.utils.text import slugify
 from faker import Faker
 
 from core.env import env
 from core.settings import MEDIA_ROOT
 from orders.models import ShippingType
 from shop.models import Category, Image, Product
+from users.models import Account
 
 
 class Command(BaseCommand):
@@ -63,6 +65,7 @@ class Command(BaseCommand):
             in_stock = random.randint(1, 10)
             sold = random.randint(0, in_stock)
             special_offer = random.choice([True, False])
+            seller = random.choice(Account.objects.all())
 
             products.append(
                 Product(
@@ -74,6 +77,7 @@ class Command(BaseCommand):
                     in_stock=in_stock,
                     sold=sold,
                     special_offer=special_offer,
+                    seller=seller,
                 )
             )
 
@@ -98,19 +102,26 @@ class Command(BaseCommand):
         return selected_images
 
     def create_batch_images(self):
-        folder_path = os.path.join(MEDIA_ROOT, "product_images/")
-        for product in Product.objects.all():
+        folder_path = os.path.join(MEDIA_ROOT, "product_images_examples/")
+        products = Product.objects.all()
+        for product in products:
             num_images = random.randint(0, 3)
             selected_images = self.generate_random_images(
                 folder_path=folder_path, num_images=num_images
             )
 
             for image_file in selected_images:
+                clean_name = (
+                    slugify(os.path.splitext(image_file)[0])
+                    + os.path.splitext(image_file)[1]
+                )
                 image_path = os.path.join(folder_path, image_file)
                 with open(image_path, "rb") as f:
-                    image_obj = Image.objects.create(product=product)
-                    image_obj.image.save(image_file, File(f))
+                    django_file = File(f)
+                    image_obj = Image(product=product)
+                    image_obj.image.save(clean_name, django_file, save=False)
                     image_obj.save()
+        self.stdout.write(self.style.SUCCESS("Pictures created successfully."))
 
     def create_batch_shipping_type(self):
         shipping_types = [

@@ -98,7 +98,9 @@ class Image(models.Model):
         help_text="Product associated with the image.",
     )
     image = models.ImageField(
-        upload_to="product_images", help_text="Image of the product."
+        upload_to="product_images",
+        help_text="Image of the product.",
+        max_length=255,
     )
     thumbnail = models.BooleanField(
         default=False, help_text="Is this image the thumbnail for the product?"

@@ -1,0 +1,35 @@
+services:
+  wszebishop:
+    container_name: wszebishop
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+
+  db:
+    image: postgres:16
+    container_name: db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=wszebishop
+      - POSTGRES_PASSWORD=admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 30s
+      retries: 6
+    volumes:
+      - postgres:/data/postgres
+
+
+
+volumes:
+  postgres:

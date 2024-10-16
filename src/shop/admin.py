@@ -13,13 +13,6 @@ class ProductImagesInline(admin.StackedInline):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = [
         "name",
-        "parent",
-    ]
-    list_filter = [
-        "parent",
-    ]
-    list_editable = [
-        "parent",
     ]
 
 

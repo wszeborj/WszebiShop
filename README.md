@@ -13,7 +13,7 @@ It allows users to register, log in, update their profiles, and browse or manage
 The project includes user authentication, product management, image uploading, and search functionality.
 </details>
 
-## Technologies
+## Tools & Technologies
 <ul>
 <li>Python 3.11</li>
 <li>Django 4.4.4</li>
@@ -21,6 +21,7 @@ The project includes user authentication, product management, image uploading, a
 <li>Pillow</li>
 <li>django-filter</li>
 <li>Stripe</li>
+<li>Pandas</li>
 <li>Plotly 5.22.0</li>
 <li>Sentry</li>
 <li>Pre-commit</li>
