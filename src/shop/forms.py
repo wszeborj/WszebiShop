@@ -4,6 +4,7 @@ from .models import Image, Product
 
 
 class ProductForm(forms.ModelForm):
+    # noinspection PyPackageRequirements
     class Meta:
         model = Product
         fields = "__all__"
