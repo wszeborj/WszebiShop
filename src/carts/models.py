@@ -25,11 +25,11 @@ class CartItem(models.Model):
         auto_now_add=True, help_text="Time when the cart item was created."
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.product.name} x {self.quantity}"
 
-    def get_absolute_url(self):
-        return reverse_lazy("carts:cart_details")
+    def get_absolute_url(self) -> str:
+        return reverse_lazy("carts:cart-details")
 
     @property
     def total_product_cost(self) -> Decimal:

@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta
 from io import BytesIO
 
@@ -28,7 +29,7 @@ class ProductFactory(DjangoModelFactory):
     name = factory.Faker("word")
     description = factory.Faker("sentence")
     category = factory.SubFactory(CategoryFactory)
-    unit = factory.Faker("word")
+    unit = random.choice(["piece", "box"])
     unit_price = factory.Faker(
         "pydecimal", left_digits=2, right_digits=2, positive=True
     )

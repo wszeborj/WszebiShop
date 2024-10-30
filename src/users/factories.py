@@ -19,6 +19,4 @@ class AccountFactory(DjangoModelFactory):
     phone = factory.LazyFunction(lambda: PhoneNumber.from_string("+48123456789"))
     password = factory.PostGenerationMethodCall("set_password", "defaultpassword")
     birth_date = factory.Faker("date_of_birth")
-    status = Account.State.NEW
-    mode = Account.Mode.BUYER
     is_active = True

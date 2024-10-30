@@ -37,7 +37,7 @@ class Address(models.Model):
     class Meta:
         ordering = ("-created_at",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"({self.id}) assigned to: {self.account}"
 
 
@@ -49,7 +49,6 @@ class ShippingType(models.Model):
         max_digits=100,
         help_text="Cost of this shipping type.",
     )
-    # order = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
 
 
 class Order(models.Model):
@@ -103,7 +102,7 @@ class Order(models.Model):
         help_text="Total price with shipping price of the order including shipping.",
     )
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("orders:order-details", args=[str(self.pk)])
 
 

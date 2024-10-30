@@ -25,12 +25,6 @@ class TestCartsView(TestCase):
             account=self.account, product=self.product2, quantity=1
         )
 
-        # self.add_to_cart_url = reverse("carts:add-to-cart", args=[self.product3.id])
-        # self.remove_from_cart_url = reverse("carts:remove-from-cart", args=[self.product1.id])
-        # self.remove_all_url = reverse("carts:remove-all")
-        # self.remove_item_url = reverse("carts:remove-item", args=[self.cart_item1.id])
-        # self.update_cart_url = reverse("carts:update-quantity", args=[self.product1.id])
-
     @tag("z")
     def test_cart_list_view_GET(self):
         cart_list_view_url = reverse(viewname="carts:cart-details")
@@ -110,13 +104,15 @@ class TestCartsView(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(CartItem.objects.count(), 0)
 
-    # @tag('x')
+    @tag("x")
     def test_remove_item_view_removes_one_cart_item_POST(self):
         remove_item_url = reverse(
             viewname="carts:remove-item", args=[self.cart_item1.id]
         )
+        print(f"url - {remove_item_url=}")
+        print(f"before removing - {[item.id for item in CartItem.objects.all()]=}")
         response = self.client.post(path=remove_item_url)
-
+        print(f"after removing - {[item.id for item in CartItem.objects.all()]=}")
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(CartItem.objects.count(), 1)
         self.assertEquals(CartItem.objects.first().product, self.product2)
@@ -168,3 +164,17 @@ class TestCartsView(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Quantity updated.")
+
+    @tag("x")
+    def test_update_cart_vew_update_quantity_with_negative_value_should_not_be_updated_POST(
+        self,
+    ):
+        update_cart_url = reverse(
+            viewname="carts:update-quantity", args=[self.product1.id]
+        )
+        response = self.client.post(path=update_cart_url, data={"quantity": -1})
+
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertEqual(CartItem.objects.count(), 2)
+        self.cart_item1.refresh_from_db()
+        self.assertEquals(self.cart_item1.quantity, 3)
