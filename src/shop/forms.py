@@ -11,14 +11,6 @@ class ProductForm(forms.ModelForm):
         exclude = ["seller"]
         widgets = {"description": forms.Textarea(attrs={"cols": 80, "rows": 5})}
 
-    # def __init__(self, *args, **kwargs):
-    #     super(ProductForm, self).__init__(*args, **kwargs)
-    #
-    #     if 'instance' in kwargs:
-    #         instance = kwargs['instance']
-    #         self.fields['name'].initial = instance.name
-    #
-
 
 def validate_image(image):
     try:

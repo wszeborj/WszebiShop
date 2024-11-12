@@ -6,21 +6,11 @@ import stripe
 from box import Box
 from django.conf import settings
 from django.core import mail
-
-# from django.contrib.messages import get_messages
 from django.shortcuts import reverse
 from django.test import RequestFactory, TestCase, tag
 
-# from carts.factories import CartItemFactory
-# from carts.models import CartItem
-from orders.factories import (  # OrderItemFactory,
-    AddressFactory,
-    OrderFactory,
-    ShippingTypeFactory,
-)
+from orders.factories import AddressFactory, OrderFactory, ShippingTypeFactory
 from orders.models import Order
-
-# from shop.factories import ProductFactory
 from users.factories import AccountFactory
 
 from ..views import process_webhook_event, stripe_webhook
@@ -130,7 +120,7 @@ class TestWebhook(TestCase):
         }
         mock_construct_event.return_value = event_mock
         mock_construct_event.side_effect = stripe.error.SignatureVerificationError(
-            "Invalid signature"
+            "Invalid signature", "header"
         )
 
         payload = json.dumps({"type": "payment_intent.succeeded"})
@@ -142,7 +132,6 @@ class TestWebhook(TestCase):
             content_type="application/json",
             HTTP_STRIPE_SIGNATURE=signature,
         )
-
         response = stripe_webhook(request)
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
@@ -206,23 +195,17 @@ class TestWebhook(TestCase):
         self.assertEqual(mail.outbox[0].subject, "Issue with payment for your order")
 
     def test_success_view(self):
-        response = self.client.get(reverse("payment-success"))
+        response = self.client.get(reverse("payments:payment-success"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "payments/payment_success.html")
 
     def test_cancelled_view(self):
-        response = self.client.get(reverse("payment-cancel"))
+        response = self.client.get(reverse("payments:payment-cancel"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "payments/payment_cancel.html")
 
-    ##########################################################################################################
     # @tag("x")
     def test_process_webhook_event_with_payment_intent_succeeded(self):
-        # request = self.factory.post(
-        #     path="stripe/webhook",
-        #     data=payload,
-        #     content_type="application/json",
-        # )
         self.order = OrderFactory.create(
             id=65,
             buyer=self.account,
@@ -240,69 +223,4 @@ class TestWebhook(TestCase):
         process_webhook_event(event)
 
         self.order.refresh_from_db()
-        self.assertEqual(self.order.status, Order.OrderStatus.AWAITING_PAYMENT)
-
-    # @tag("x")
-    # @patch("stripe.Webhook.construct_event")
-    # def test_valid_webhook_with_payment_intent_succeeded2(
-    #         self, mock_construct_event
-    # ):
-    #     event_mock = Box({
-    #         "type": "checkout.session.completed",
-    #         "data": {
-    #             "object": {
-    #                 "payment_status": "paid",
-    #                 "metadata": {"order_id": str(self.order.id)}
-    #             }
-    #         }
-    #     })
-    #     mock_construct_event.return_value = event_mock
-    #
-    #     request = self.factory.post(
-    #         path="stripe/webhook",
-    #         data=event_mock,
-    #         content_type="application/json",
-    #         HTTP_STRIPE_SIGNATURE='test_signature'
-    #     )
-    #
-    #     response = stripe_webhook(request)
-    #     self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    # @tag("x")
-
-
-#################################################################################################
-# # @tag("x")
-# @patch("stripe.Webhook.construct_event")
-# # @patch("stripe.Event")
-# def test_valid_webhook_with_succeeded_payment_intent2(
-#     self, mock_construct_event
-# ):
-#     event_mock = MagicMock()
-#     event_mock.type = "checkout.session.completed"
-#     # mock_event = mock_event_class.return_value
-#     # mock_event["type"] = "checkout.session.completed"
-#     # mock_event["data"] = {
-#     #     "object": {
-#     #         "payment_status": "paid",
-#     #         "metadata": {"order_id": self.order.id},
-#     #     }
-#     # }
-#
-#     mock_construct_event.return_value = event_mock
-#
-#     payload = json.dumps({"type": "payment_intent.succeeded"})
-#     signature = "test_signature"
-#
-#     request = self.factory.post(
-#         path="stripe/webhook",
-#         data=payload,
-#         content_type="application/json",
-#         HTTP_STRIPE_SIGNATURE=signature,
-#     )
-#
-#     response = stripe_webhook(request)
-#     self.order.refresh_from_db()
-#
-#     self.assertEqual(response.status_code, HTTPStatus.OK)
-#     self.assertEqual(self.order.status, Order.OrderStatus.AWAITING_PAYMENT)
+        self.assertEqual(self.order.status, Order.OrderStatus.PAID)

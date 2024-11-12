@@ -1,4 +1,5 @@
 from io import BytesIO
+from urllib.parse import urlencode
 
 from django.core.files.base import ContentFile
 from django.db import models
@@ -24,7 +25,9 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     def get_absolute_url(self):
-        return reverse("category_list", args=[self.pk])
+        base_url = reverse("shop:category-filtered-products")
+        query_string = urlencode({"category": self.pk})
+        return f"{base_url}?{query_string}"
 
 
 class Product(models.Model):
@@ -115,8 +118,8 @@ class Image(models.Model):
 
             img = PilImage.open(self.image)
             if img.height > 500 or img.width > 333:
-                output_size = (500, 333)
-                img.thumbnail(output_size)
+                output_size = (333, 500)
+                img = img.resize(output_size, PilImage.Resampling.LANCZOS)
                 thumb_io = BytesIO()
                 img.save(thumb_io, format="png")
                 self.image.save(
@@ -128,4 +131,4 @@ class Image(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"({self.id}) {self.image} created at: {self.created_at}"
+        return f"Image ({self.id}) {self.image.name} for product ({self.product.id}) {self.product.name}."

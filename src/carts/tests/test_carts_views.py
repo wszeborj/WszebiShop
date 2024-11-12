@@ -104,15 +104,12 @@ class TestCartsView(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(CartItem.objects.count(), 0)
 
-    @tag("x")
+    # @tag("x")
     def test_remove_item_view_removes_one_cart_item_POST(self):
         remove_item_url = reverse(
             viewname="carts:remove-item", args=[self.cart_item1.id]
         )
-        print(f"url - {remove_item_url=}")
-        print(f"before removing - {[item.id for item in CartItem.objects.all()]=}")
         response = self.client.post(path=remove_item_url)
-        print(f"after removing - {[item.id for item in CartItem.objects.all()]=}")
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(CartItem.objects.count(), 1)
         self.assertEquals(CartItem.objects.first().product, self.product2)

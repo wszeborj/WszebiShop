@@ -91,9 +91,8 @@ class RemoveAll(LoginRequiredMixin, View):
 
 
 class RemoveItem(LoginRequiredMixin, View):
-    def post(self, request, product_id):
-        product = get_object_or_404(Product, pk=product_id)
-        cart_item = CartItem.objects.get(product=product, account=request.user)
+    def post(self, request, cart_item_id):
+        cart_item = get_object_or_404(CartItem, pk=cart_item_id)
         cart_item.delete()
         messages.success(request, "Item removed from your cart.")
 

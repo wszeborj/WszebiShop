@@ -16,6 +16,7 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+ENVIRONMENT = env("ENVIRONMENT")
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "bootstrap_datepicker_plus",
     "django_filters",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
+    "storages",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -174,3 +176,13 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )
+
+if env("ENVIRONMENT") == "production":
+    DEFAULT_FILE_STORAGE = "storages.backend.s3bot3.S3Boto3Storage"
+    STATICFILES_STORAGE = "storages.backends.s3.S3Storage"
+
+    # AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+    # AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+
+    AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")

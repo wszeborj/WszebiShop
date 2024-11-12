@@ -92,10 +92,10 @@ class TestUserViews(TestCase):
         new_data = {
             "username": "updated_username",
             "email": "updatedtest@test.com",
-            "phone": "999876543210",
+            "phone": "+12125552325",
         }
 
-        response = self.client.get(path=self.profile_url, data=new_data, follow=True)
+        response = self.client.post(path=self.profile_url, data=new_data, follow=True)
         account.refresh_from_db()
         self.assertEquals(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/profile.html")

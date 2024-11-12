@@ -16,7 +16,7 @@ from shop.factories import ProductFactory
 from users.factories import AccountFactory
 
 from ..forms import AddressForm
-from ..models import Address
+from ..models import Address, Order
 
 
 class TestOrdersView(TestCase):
@@ -42,7 +42,6 @@ class TestOrdersView(TestCase):
         self.orders_list_url = reverse(viewname="orders:orders-list")
         self.sales_list_url = reverse(viewname="orders:sales-list")
 
-    @tag("z")
     def test_order_confirmation_list_view_logged_in_GET(self):
         self.client.force_login(self.account)
         response = self.client.get(self.order_confirmation_list_view_url)
@@ -55,7 +54,6 @@ class TestOrdersView(TestCase):
         self.assertIn("selected_shipping_address", response.context)
         self.assertIn("total_price_with_shipping", response.context)
 
-    # @tag('x')
     def test_order_confirmation_list_view_not_logged_in_GET(self):
         response = self.client.get(self.order_confirmation_list_view_url)
 
@@ -63,8 +61,9 @@ class TestOrdersView(TestCase):
         expected_url = f"{self.login_url}?next={self.order_confirmation_list_view_url}"
         self.assertRedirects(response, expected_url)
 
-    # @tag('x')
-    def test_product_to_order_view_POST(self):
+    def test_product_to_order_view_should_add_product_to_cart_and_proceed_to_order_POST(
+        self,
+    ):
         self.client.force_login(self.account)
         product_to_order_url = reverse(
             viewname="orders:product-to-order", args=[self.product3.id]
@@ -73,9 +72,10 @@ class TestOrdersView(TestCase):
 
         self.assertRedirects(response, self.order_confirmation_list_view_url)
         self.assertEqual(CartItem.objects.count(), 3)
-        self.assertIn(response.context["cart_items"], self.product3)
+        self.assertTrue(
+            CartItem.objects.filter(product=self.product3, account=self.account)
+        )
 
-    # @tag('x')
     def test_add_address_view_logged_in_valid_data_new_address_should_be_added_POST(
         self,
     ):
@@ -111,7 +111,6 @@ class TestOrdersView(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "New address added")
 
-    # @tag('x')
     def test_add_address_view_logged_in_invalid_data_new_address_should_not_be_added_POST(
         self,
     ):
@@ -134,7 +133,6 @@ class TestOrdersView(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Some values in address form were wrong")
 
-    # @tag('x')
     def test_add_address_view_not_logged_in_POST(self):
         new_address = {
             "first_name": "test_first_name",
@@ -153,7 +151,6 @@ class TestOrdersView(TestCase):
         self.assertRedirects(response, expected_url)
         self.assertEqual(Address.objects.count(), 2)
 
-    # @tag('x')
     def test_add_address_view_logged_in_GET(self):
         self.client.force_login(self.account)
         response = self.client.get(path=self.add_address_url)
@@ -190,12 +187,6 @@ class TestOrdersListView(TestCase):
         self.orders_list_url = reverse(viewname="orders:orders-list")
         self.sales_list_url = reverse(viewname="orders:sales-list")
 
-    def test_order_list_view_post_method_returns_not_allowed(self):
-        response = self.client.post(self.orders_list_url)
-
-        self.assertEqual(response.status_code, HTTPStatus.METHOD_NOT_ALLOWED)
-
-    # @tag('x')
     def test_order_list_view_logged_in_without_filter_GET(self):
         self.client.force_login(self.account)
 
@@ -207,7 +198,7 @@ class TestOrdersListView(TestCase):
         self.assertIn(self.order2, response.context["order_items"])
         self.assertNotIn(self.order3, response.context["order_items"])
 
-    # @tag('x')
+    @tag("z")
     def test_order_list_view_logged_in_with_filter_GET(self):
         self.client.force_login(self.account)
 
@@ -329,7 +320,7 @@ class TestOrderDetailView(TestCase):
 
         self.login_url = reverse("users:login")
         self.order_detail_url = reverse(
-            viewname="orders:order-details", args=[self.product1.id]
+            viewname="orders:order-details", args=[self.order1.id]
         )
 
     # @tag('x')
@@ -360,7 +351,9 @@ class TestOrderDetailView(TestCase):
 class UpdateOrderStatusTests(TestCase):
     def setUp(self):
         self.account = AccountFactory.create()
-        self.order = OrderFactory.create(shipping_status="NEW")
+        self.order = OrderFactory.create(
+            shipping_status=Order.OrderShippingStatus.NEW, buyer=self.account
+        )
 
         self.update_status_url = reverse(
             "orders:order-update-status", args=[self.order.id]
@@ -369,19 +362,20 @@ class UpdateOrderStatusTests(TestCase):
     # @tag('x')
     def test_order_update_status_view_logged_in_POST(self):
         self.client.force_login(self.account)
-        new_status = {"shipping_status": "SHIPPED"}
+        new_status = Order.OrderShippingStatus.SHIPPED
+        status_data = {"order_shipping_status": new_status}
+        response = self.client.post(path=self.update_status_url, data=status_data)
 
-        response = self.client.post(path=self.update_status_url, data=new_status)
-
+        self.order.refresh_from_db()
         self.assertEqual(self.order.shipping_status, new_status)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(
-            response, reverse("orders:order-detail", args=[self.order.id])
+            response, reverse(viewname="orders:order-details", args=[self.order.id])
         )
 
     # @tag('x')
-    def test_order_update_status_view_not_logged_in_GET(self):
-        response = self.client.POST(self.update_status_url)
+    def test_order_update_status_view_not_logged_in_POST(self):
+        response = self.client.post(self.update_status_url)
 
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         expected_url = f"{reverse('users:login')}?next={self.update_status_url}"

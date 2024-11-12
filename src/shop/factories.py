@@ -34,22 +34,19 @@ class ProductFactory(DjangoModelFactory):
         "pydecimal", left_digits=2, right_digits=2, positive=True
     )
     in_stock = factory.Faker("random_int", min=0, max=1000)
-    sold = factory.Faker("random_int", min=0, max=1000)
-    # created_at = factory.Faker('past_datetime')
+    sold = factory.Faker("random_int", min=0, max=999)
     created_at = factory.LazyAttribute(lambda _: fake.past_date())
     updated_at = factory.LazyAttribute(
         lambda _self: _self.created_at + timedelta(days=365)
     )
     special_offer = factory.Faker("boolean")
-    is_active = factory.Faker("boolean")
+    is_active = True
     seller = factory.SubFactory(AccountFactory)
 
 
 def create_image(width: int = None, height: int = None):
-    if width is None:
-        width = (fake.random_int(min=334, max=1000),)
-    if height is None:
-        height = fake.random_int(min=334, max=1000)
+    width = 600 if width is None else width
+    height = 800 if height is None else height
     file = BytesIO()
     image = PilImage.new("RGB", (width, height), color=(255, 255, 255))
     image.save(file, "png")
@@ -63,5 +60,5 @@ class ImageFactory(DjangoModelFactory):
         model = Image
 
     product = factory.SubFactory(ProductFactory)
-    image = factory.django.ImageField(width=334, height=501, format="PNG")
+    image = factory.django.ImageField(width=600, height=800, format="PNG")
     created_at = factory.Faker("date_time_this_year")

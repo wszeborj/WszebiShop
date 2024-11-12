@@ -1,9 +1,6 @@
 from django.test import TestCase, tag
-from icecream import ic
 
-from shop.factories import ProductFactory
 from shop.models import Product
-from users.factories import AccountFactory
 from users.models import Account
 
 from ..factories import (
@@ -19,8 +16,6 @@ class AddressFactoryTest(TestCase):
     @tag("z")
     def test_create_single_object(self):
         address = AddressFactory.create()
-        # ic(address)
-        # ic_all_attributes(address)
 
         self.assertIsInstance(address, Address)
         self.assertEqual(Address.objects.count(), 1)
@@ -52,17 +47,14 @@ class ShippingTypeFactoryTest(TestCase):
         self.assertGreater(shipping_type.price, 0)
 
     def test_create_multiple_objects(self):
-        shipping_type = ShippingTypeFactory.create_batch(10)
-        ic(shipping_type)
+        ShippingTypeFactory.create_batch(10)
         self.assertEqual(ShippingType.objects.count(), 10)
 
 
 class OrderFactoryTest(TestCase):
-    @tag("x")
+    # @tag("x")
     def test_create_single_object(self):
         order = OrderFactory.create()
-        # ic(order)
-        # ic_all_attributes(order)
 
         self.assertIsInstance(order, Order)
         self.assertEqual(Order.objects.count(), 1)
@@ -87,14 +79,8 @@ class OrderFactoryTest(TestCase):
 
 
 class OrderItemFactoryTest(TestCase):
-    def setUp(self):
-        self.seller_account = AccountFactory.create()
-        self.buyer_account = AccountFactory.create()
-        self.product1 = ProductFactory.create(seller=self.seller_account)
-
-    # @tag("x")
     def test_create_single_object(self):
-        order_item = OrderItemFactory.create(product=self.product1)
+        order_item = OrderItemFactory.create()
 
         self.assertIsInstance(order_item, OrderItem)
         self.assertEqual(OrderItem.objects.count(), 1)
@@ -103,7 +89,7 @@ class OrderItemFactoryTest(TestCase):
         self.assertEqual(order_item.quantity, 1)
         self.assertIsNotNone(order_item.account)
         self.assertIsInstance(order_item.account, Account)
-        self.assertEqual(Account.objects.count(), 2)
+        self.assertEqual(Account.objects.count(), 4)
         self.assertIsNotNone(order_item.created_at)
         self.assertIsNotNone(order_item.update_at)
         self.assertIsNotNone(order_item.order)

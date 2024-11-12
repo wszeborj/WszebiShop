@@ -40,7 +40,7 @@
               <p><span class="h6 fw-bold">{{ item.quantity }} {{ item.product.unit }} X {{ item.product.unit_price }}</span></p>
 
               <div class="col">
-                <form action="{% url 'carts:remove-item' product_id=item.product.id %}" method="POST" class="d-inline">
+                <form action="{% url 'carts:remove-item' cart_item_id=item.id %}" method="POST" class="d-inline">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-danger btn-sm delete-button">Remove item</button>
                 </form>

@@ -137,7 +137,6 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "order"
 
     def get(self, request, *args, **kwargs):
-        print("Test")
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):

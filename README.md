@@ -28,6 +28,7 @@ The project includes user authentication, product management, image uploading, a
 <li>unittest</li>
 <li>factory_boy</li>
 <li>docker</li>
+<li>Poetry</li>
 </ul>
 
 ## Setup

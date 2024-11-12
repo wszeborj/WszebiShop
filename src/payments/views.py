@@ -57,9 +57,12 @@ class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
                         "price_data": {
                             "currency": "pln",
                             "unit_amount": total_price_for_checkout,
-                            # "product_data": {"name": "t-shirt", "description": "xyz"},
+                            "product_data": {
+                                "name": "order_id",
+                                "description": order_id,
+                            },
                         },
-                        # "quantity": 1,
+                        "quantity": 1,
                     }
                 ],
                 success_url=domain + "/payments/success/",
@@ -98,8 +101,6 @@ def process_webhook_event(event):
         )
 
         if session.payment_status == "paid":
-            # Fulfill the purchase
-            print("session.payment_status paid")
             order_id = int(session["metadata"].order_id)
             OrderClassProcessing.change_order_payment_status(
                 order_id=order_id, status=Order.OrderStatus.PAID
@@ -117,7 +118,6 @@ def process_webhook_event(event):
 
     elif event["type"] == "checkout.session.async_payment_failed":
         session = event["data"]["object"]
-        print("checkout.session.async_payment_failed")
         order_id = int(session["metadata"].order_id)
         OrderClassProcessing.change_order_payment_status(
             order_id=order_id, status=Order.OrderStatus.UNPAID
@@ -190,7 +190,7 @@ class OrderClassProcessing:
         Payment.objects.create(
             user=buyer,
             price=total_price_with_shipping,
-            order=order.id,
+            order=order,
             state=Payment.State.NEW,
         )
 
@@ -232,4 +232,4 @@ class OrderClassProcessing:
             recipient_list=[recipient_mail],
             fail_silently=False,
         )
-        print(f"Email about failed payment saved to file in {settings.EMAIL_FILE_PATH}")
+        # print(f"Email about failed payment saved to file in {settings.EMAIL_FILE_PATH}")

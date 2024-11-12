@@ -43,10 +43,3 @@ class ImageAdmin(admin.ModelAdmin):
     list_filter = [
         "created_at",
     ]
-
-
-#
-# @admin.register(Address)
-# class AddressAdmin(admin.ModelAdmin):
-#     list_display = ['account', 'country', 'state', 'city', 'street',]
-#     list_filter = ['country', 'state', 'city', 'street',]
