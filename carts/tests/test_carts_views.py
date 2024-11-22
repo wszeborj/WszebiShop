@@ -162,7 +162,7 @@ class TestCartsView(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Quantity updated.")
 
-    @tag("x")
+    # @tag("x")
     def test_update_cart_vew_update_quantity_with_negative_value_should_not_be_updated_POST(
         self,
     ):

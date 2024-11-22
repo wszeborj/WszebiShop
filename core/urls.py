@@ -27,7 +27,7 @@ urlpatterns = [
     path("payments/", include("payments.urls")),
     path("users/", include("users.urls")),
     path("dashboards/", include("dashboards.urls")),
-    path("django_plotly_dash/", include("django_plotly_dash.urls")),
+    # path("django_plotly_dash/", include("django_plotly_dash.urls")),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

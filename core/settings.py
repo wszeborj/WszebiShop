@@ -9,7 +9,7 @@ from .env import env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -92,16 +92,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+if env("ENVIRONMENT") == "production":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("RDS_DB_NAME"),
+            "USER": env("RDS_DB_USER"),
+            "PASSWORD": env("RDS_DB_PASSWORD"),
+            "HOST": env("RDS_DB_HOST"),
+            "PORT": env("RDS_DB_PORT"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("DB_NAME"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": env("DB_HOST"),
+            "PORT": env("DB_PORT"),
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -178,8 +190,10 @@ sentry_sdk.init(
 )
 
 if env("ENVIRONMENT") == "production":
-    DEFAULT_FILE_STORAGE = "storages.backend.s3bot3.S3Boto3Storage"
-    STATICFILES_STORAGE = "storages.backends.s3.S3Storage"
+    STORAGES = {
+        "default": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {}},
+        "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {}},
+    }
 
     # AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
     # AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')

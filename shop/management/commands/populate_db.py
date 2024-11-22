@@ -27,44 +27,49 @@ class Command(BaseCommand):
 
     def create_super_user(self):
         User = get_user_model()
-
-        user = User.objects.create_superuser(
-            username=env("SUPERUSER_NAME"),
-            email=env("SUPERUSER_MAIL"),
-            password=env("SUPERUSER_PASSWORD"),
-            phone="123456789",
-            birth_date=datetime.fromisoformat("1990-12-04"),
-        )
-        self.stdout.write(
-            self.style.SUCCESS(f'Superuser "{user} created successfully.')
-        )
+        if not User.objects.filter(username=env("SUPERUSER_NAME")).exists():
+            user = User.objects.create_superuser(
+                username=env("SUPERUSER_NAME"),
+                email=env("SUPERUSER_MAIL"),
+                password=env("SUPERUSER_PASSWORD"),
+                phone="123456789",
+                birth_date=datetime.fromisoformat("1990-12-04"),
+            )
+            self.stdout.write(
+                self.style.SUCCESS(f'Superuser "{user} created successfully.')
+            )
+        else:
+            self.stdout.write(self.style.SUCCESS("Superuser already exist."))
 
     def create_batch_categories(self):
-        categories = [
-            "Electronics",
-            "Clothing",
-            "Books",
-            "Computers",
-            "Sports",
-            "Automotive",
-        ]
-        for category_name in categories:
-            Category.objects.bulk_create([Category(name=category_name)])
+        if not Category.objects.exists():
+            categories = [
+                "Electronics",
+                "Clothing",
+                "Books",
+                "Computers",
+                "Sports",
+                "Automotive",
+            ]
+            for category_name in categories:
+                Category.objects.bulk_create([Category(name=category_name)])
 
-        self.stdout.write(self.style.SUCCESS("Categories created successfully."))
+            self.stdout.write(self.style.SUCCESS("Categories created successfully."))
+        else:
+            self.stdout.write(self.style.SUCCESS("Categories already created."))
 
     def create_batch_products(self):
         fake = Faker()
         products = []
         for _ in range(10):
-            name = fake.catch_phrase()
-            description = fake.text()
+            name = fake.name()[:50]
+            description = fake.text()[:255]
             category = random.choice(Category.objects.all())
             unit = random.choice(["piece"])
             unit_price = round(random.uniform(1.00, 10000.00), 2)
             in_stock = random.randint(1, 10)
-            sold = random.randint(0, in_stock)
-            special_offer = random.choice([True, False])
+            sold = random.randint(0, in_stock - 1)
+            special_offer = False
             seller = random.choice(Account.objects.all())
 
             products.append(
@@ -124,20 +129,25 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Pictures created successfully."))
 
     def create_batch_shipping_type(self):
-        shipping_types = [
-            "courier",
-            "courier_cash_on_delivery",
-            "post",
-            "parcel_locker",
-        ]
-
-        ShippingType.objects.bulk_create(
-            [
-                ShippingType(
-                    type=shipping_type, price=round(random.uniform(5.00, 100.00), 2)
-                )
-                for shipping_type in shipping_types
+        if not ShippingType.objects.exists():
+            shipping_types = [
+                "courier",
+                "courier_cash_on_delivery",
+                "post",
+                "parcel_locker",
             ]
-        )
 
-        self.stdout.write(self.style.SUCCESS("Shipping types created successfully."))
+            ShippingType.objects.bulk_create(
+                [
+                    ShippingType(
+                        type=shipping_type, price=round(random.uniform(5.00, 100.00), 2)
+                    )
+                    for shipping_type in shipping_types
+                ]
+            )
+
+            self.stdout.write(
+                self.style.SUCCESS("Shipping types created successfully.")
+            )
+        else:
+            self.stdout.write(self.style.SUCCESS("Shipping types already created."))

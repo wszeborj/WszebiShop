@@ -1,6 +1,7 @@
 import django_filters
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -78,6 +79,37 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
     form_class = ProductForm
     model = Product
     success_url = reverse_lazy("shop:user-product-list")
+
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        images = self.request.FILES.getlist("image")
+
+        for image_file in images:
+            image_form = ImageForm(files={"image": image_file})
+            if not image_form.is_valid():
+                messages.warning(
+                    self.request, "Image too small, please select a larger image"
+                )
+                return self.form_invalid(form)
+
+        with transaction.atomic():
+            product = form.save(commit=False)
+            product.save()
+
+            if images:
+                product.images.all().delete()
+
+                for image_file in images:
+                    image_form = ImageForm(files={"image": image_file})
+                    if image_form.is_valid():
+                        image = image_form.save(commit=False)
+                        image.product = product
+                        image.save()
+
+        return super().form_valid(form)
 
 
 class DeleteProductView(LoginRequiredMixin, DeleteView):

@@ -151,13 +151,14 @@ class TestProductUpdateDeleteSearchView(TestCase):
         self.product_category_filtered_url = reverse("shop:category-filtered-products")
         self.search_result_url = reverse("shop:search-results")
 
+    # @tag('x')
     def test_product_update_no_image_POST(self):
         response = self.client.post(
             path=self.product_update_url, data=self.updated_product_data, follow=True
         )
         self.product.refresh_from_db()
 
-        # self.assertTemplateUsed(response, "shop/product-update.html")
+        self.assertTemplateUsed(response, "shop/product-list.html")
         self.assertEquals(response.status_code, HTTPStatus.OK)
         self.assertEquals(Product.objects.count(), 1)
         self.assertEquals(self.product.name, self.updated_product_data["name"])
@@ -174,7 +175,7 @@ class TestProductUpdateDeleteSearchView(TestCase):
             self.product.is_active, self.updated_product_data["is_active"]
         )
 
-    @tag("x")
+    # @tag("x")
     def test_product_update_with_valid_image_POST(self):
         image = create_image()
         image_file = SimpleUploadedFile(
@@ -249,13 +250,14 @@ class TestProductUpdateDeleteSearchView(TestCase):
         self.assertEquals(response.status_code, HTTPStatus.FOUND)
         self.assertEquals(Product.objects.count(), 0)
 
+    @tag("x")
     def test_product_delete_view_not_logged_should_not_delete_product_POST(self):
         self.client.logout()
 
         response = self.client.post(
             path=self.product_delete_url, data=self.updated_product_data, follow=True
         )
-        # self.assertEquals(response.status_code, HTTPStatus.FOUND)
+        self.assertEquals(response.status_code, HTTPStatus.OK)
         self.assertEquals(Product.objects.count(), 1)
         expected_url = f"{reverse('users:login')}?next={self.product_delete_url}"
         self.assertRedirects(response, expected_url)
