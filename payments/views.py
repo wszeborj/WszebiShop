@@ -16,8 +16,6 @@ from users.models import Account
 
 from .models import Payment
 
-YOUR_DOMAIN = "https://wszebishop.pl"
-
 
 class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
@@ -42,8 +40,8 @@ class CreateStripeCheckoutSessionView(View, LoginRequiredMixin):
             total_price_with_shipping=total_price_with_shipping,
         )
 
-        domain = "https://YOUR_DOMAIN.pl"
-        if settings.DEBUG:
+        domain = settings.DOMAIN
+        if settings.DEBUG or settings.ENVIRONMENT == "development":
             domain = "http://127.0.0.1:8000"
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
