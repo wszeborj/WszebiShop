@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -18,7 +18,6 @@ class TestUserViews(TestCase):
         self.login_url = reverse("users:login")
         self.profile_url = reverse("users:profile-update")
 
-    @tag("z")
     def test_register_view_valid_POST(self):
         birth_date_str = "1990-12-04"
         birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d").date()
@@ -56,7 +55,6 @@ class TestUserViews(TestCase):
             mail.outbox[0].subject, "Activation link to your account on Wszebishop"
         )
 
-    # @tag('x')
     def test_register_view_invalid_POST(self):
         birth_date_str = "1990-12-04"
         birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d").date()
@@ -84,7 +82,6 @@ class TestUserViews(TestCase):
         )
         self.assertEqual(len(mail.outbox), 0)
 
-    # @tag('x')
     def test_profile_update_view_POST(self):
         account = AccountFactory.create()
         self.client.force_login(account)
@@ -103,7 +100,6 @@ class TestUserViews(TestCase):
         self.assertEquals(account.email, new_data["email"])
         self.assertEquals(account.phone, new_data["phone"])
 
-    # @tag('x')
     def test_activate_view_success_GET(self):
         account = AccountFactory(is_active=False)
         uid = urlsafe_base64_encode(force_bytes(account.pk))
@@ -117,7 +113,6 @@ class TestUserViews(TestCase):
         self.assertTrue(account.is_active)
         self.assertContains(response, "Your account has been activated successfully!")
 
-    # @tag('x')
     def test_activate_view_failure_GET(self):
         uid = "invalid_uid"
         token = "invalid_token"

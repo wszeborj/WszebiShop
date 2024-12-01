@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.contrib.messages import get_messages
 from django.shortcuts import reverse
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from shop.factories import ProductFactory
 from users.factories import AccountFactory
@@ -25,7 +25,6 @@ class TestCartsView(TestCase):
             account=self.account, product=self.product2, quantity=1
         )
 
-    @tag("z")
     def test_cart_list_view_GET(self):
         cart_list_view_url = reverse(viewname="carts:cart-details")
         response = self.client.get(path=cart_list_view_url)
@@ -44,7 +43,6 @@ class TestCartsView(TestCase):
         )
         self.assertTrue(response.context["one_seller"])
 
-    # @tag('x')
     def test_add_to_cart_view_new_product_will_create_new_cart_item_POST(self):
         add_to_cart_url = reverse(viewname="carts:add-to-cart", args=[self.product3.id])
         response = self.client.post(path=add_to_cart_url)
@@ -55,7 +53,6 @@ class TestCartsView(TestCase):
         self.assertEquals(CartItem.objects.last().quantity, 1)
         self.assertEquals(CartItem.objects.last().account, self.account)
 
-    # @tag('x')
     def test_add_to_cart_view_adding_existing_product_in_cart_will_increment_quantity_in_cart_item_POST(
         self,
     ):
@@ -68,7 +65,6 @@ class TestCartsView(TestCase):
         self.assertEquals(CartItem.objects.last().quantity, 2)
         self.assertEquals(CartItem.objects.last().account, self.account)
 
-    # @tag('x')
     def test_remove_from_cart_view_removing_last_product_in_cart_item_will_delete_cart_item_POST(
         self,
     ):
@@ -81,7 +77,6 @@ class TestCartsView(TestCase):
         self.assertEqual(CartItem.objects.count(), 1)
         self.assertEquals(CartItem.objects.last().product, self.product1)
 
-    # @tag('x')
     def test_remove_from_cart_view_removing_product_in_cart_item_will_decrement_cart_item_quantity_POST(
         self,
     ):
@@ -96,7 +91,6 @@ class TestCartsView(TestCase):
         self.assertEquals(CartItem.objects.first().quantity, 2)
         self.assertEquals(CartItem.objects.first().account, self.account)
 
-    # @tag('x')
     def test_remove_all_view_remove_all_cart_items_from_cart_POST(self):
         remove_all_url = reverse("carts:remove-all")
         response = self.client.post(path=remove_all_url)
@@ -104,7 +98,6 @@ class TestCartsView(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(CartItem.objects.count(), 0)
 
-    # @tag("x")
     def test_remove_item_view_removes_one_cart_item_POST(self):
         remove_item_url = reverse(
             viewname="carts:remove-item", args=[self.cart_item1.id]
@@ -114,7 +107,6 @@ class TestCartsView(TestCase):
         self.assertEqual(CartItem.objects.count(), 1)
         self.assertEquals(CartItem.objects.first().product, self.product2)
 
-    # @tag('x')
     def test_update_cart_vew_update_quantity_to_zero_will_remove_cart_item_POST(self):
         update_cart_url = reverse(
             viewname="carts:update-quantity", args=[self.product1.id]
@@ -129,7 +121,6 @@ class TestCartsView(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Quantity updated. Item removed")
 
-    # @tag('x')
     def test_update_cart_vew_update_quantity_to_exceed_product_in_stock_will_not_change_quantity_in_cart_item_POST(
         self,
     ):
@@ -147,7 +138,6 @@ class TestCartsView(TestCase):
             str(messages[0]), f"Only {self.product1.in_stock} items available"
         )
 
-    # @tag('x')
     def test_update_cart_vew_update_quantity_with_proper_value_POST(self):
         update_cart_url = reverse(
             viewname="carts:update-quantity", args=[self.product1.id]
@@ -162,7 +152,6 @@ class TestCartsView(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Quantity updated.")
 
-    # @tag("x")
     def test_update_cart_vew_update_quantity_with_negative_value_should_not_be_updated_POST(
         self,
     ):

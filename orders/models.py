@@ -38,7 +38,7 @@ class Address(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self) -> str:
-        return f"({self.id}) assigned to: {self.account}"
+        return f"{self.first_name} {self.last_name} {self.street} {self.city} {self.state} {self.country} "
 
 
 class ShippingType(models.Model):
@@ -49,6 +49,9 @@ class ShippingType(models.Model):
         max_digits=100,
         help_text="Cost of this shipping type.",
     )
+
+    def __str__(self):
+        return f"Shipping type {self.type}"
 
 
 class Order(models.Model):

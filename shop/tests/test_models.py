@@ -1,11 +1,10 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.urls import reverse
 
 from ..factories import CategoryFactory, ImageFactory, ProductFactory, create_image
 
 
-@tag("z")
 class CategoryModelTest(TestCase):
     def setUp(self):
         self.category = CategoryFactory(name="Test Category")
@@ -19,7 +18,6 @@ class CategoryModelTest(TestCase):
         self.assertEqual(self.category.get_absolute_url(), expected_url)
 
 
-# @tag('x')
 class ProductModelTest(TestCase):
     def setUp(self):
         self.product = ProductFactory(name="Test Product")
@@ -38,7 +36,6 @@ class ProductModelTest(TestCase):
         self.assertIsNone(self.product.get_thumbnail())
 
 
-# @tag('x')
 class ImageModelTest(TestCase):
     def setUp(self):
         self.product = ProductFactory(name="Test Product")

@@ -1,4 +1,4 @@
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from users.models import Account
 
@@ -9,7 +9,6 @@ from ..models import Category, Image, Product
 
 
 class CategoryFactoryTest(TestCase):
-    @tag("z")
     def test_create_single_object(self):
         category = CategoryFactory.create()
         # ic(category)
@@ -27,7 +26,6 @@ class CategoryFactoryTest(TestCase):
 
 
 class ProductFactoryTest(TestCase):
-    # @tag('x')
     def test_create_single_object(self):
         product = ProductFactory.create()
         # ic(product)
@@ -58,7 +56,6 @@ class ProductFactoryTest(TestCase):
 
 
 class ImageFactoryTest(TestCase):
-    # @tag('x')
     def test_create_single_object(self):
         image = ImageFactory.create()
         # ic(image)

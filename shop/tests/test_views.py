@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.shortcuts import reverse
-from django.test import TestCase, tag
+from django.test import TestCase
 from icecream import ic
 
 from shop.models import Image, Product
@@ -151,7 +151,6 @@ class TestProductUpdateDeleteSearchView(TestCase):
         self.product_category_filtered_url = reverse("shop:category-filtered-products")
         self.search_result_url = reverse("shop:search-results")
 
-    # @tag('x')
     def test_product_update_no_image_POST(self):
         response = self.client.post(
             path=self.product_update_url, data=self.updated_product_data, follow=True
@@ -175,7 +174,6 @@ class TestProductUpdateDeleteSearchView(TestCase):
             self.product.is_active, self.updated_product_data["is_active"]
         )
 
-    # @tag("x")
     def test_product_update_with_valid_image_POST(self):
         image = create_image()
         image_file = SimpleUploadedFile(
@@ -243,14 +241,12 @@ class TestProductUpdateDeleteSearchView(TestCase):
         expected_url = f"{reverse('users:login')}?next={self.product_update_url}"
         self.assertRedirects(response, expected_url)
 
-    @tag("z")
     def test_product_delete_POST(self):
         response = self.client.post(self.product_delete_url)
 
         self.assertEquals(response.status_code, HTTPStatus.FOUND)
         self.assertEquals(Product.objects.count(), 0)
 
-    @tag("x")
     def test_product_delete_view_not_logged_should_not_delete_product_POST(self):
         self.client.logout()
 

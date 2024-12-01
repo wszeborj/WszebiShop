@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.contrib.messages import get_messages
 from django.shortcuts import reverse
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from carts.factories import CartItemFactory
 from carts.models import CartItem
@@ -198,7 +198,6 @@ class TestOrdersListView(TestCase):
         self.assertIn(self.order2, response.context["order_items"])
         self.assertNotIn(self.order3, response.context["order_items"])
 
-    @tag("z")
     def test_order_list_view_logged_in_with_filter_GET(self):
         self.client.force_login(self.account)
 
@@ -220,7 +219,6 @@ class TestOrdersListView(TestCase):
         self.assertIn(self.order2, response.context["order_items"])
         self.assertNotIn(self.order3, response.context["order_items"])
 
-    # @tag('x')
     def test_order_list_view_not_logged_in_GET(self):
         response = self.client.get(self.orders_list_url)
 
@@ -255,7 +253,6 @@ class TestSalesListView(TestCase):
         self.login_url = reverse("users:login")
         self.sales_list_url = reverse(viewname="orders:sales-list")
 
-    # @tag('x')
     def test_sales_list_view_logged_in_without_filter_GET(self):
         self.client.force_login(self.account)
         response = self.client.get(self.sales_list_url)
@@ -266,7 +263,6 @@ class TestSalesListView(TestCase):
         self.assertIn(self.order2, response.context["order_items"])
         self.assertNotIn(self.order3, response.context["order_items"])
 
-    # @tag('x')
     def test_sales_list_view_logged_in_with_filter_GET(self):
         self.client.force_login(self.account)
         response = self.client.get(
@@ -287,7 +283,6 @@ class TestSalesListView(TestCase):
         self.assertIn(self.order2, response.context["order_items"])
         self.assertNotIn(self.order3, response.context["order_items"])
 
-    # @tag('x')
     def test_sales_list_view_not_logged_in_GET(self):
         response = self.client.get(self.sales_list_url)
 
@@ -323,7 +318,6 @@ class TestOrderDetailView(TestCase):
             viewname="orders:order-details", args=[self.order1.id]
         )
 
-    # @tag('x')
     def test_order_detail_view_logged_in_GET(self):
         self.client.force_login(self.account)
 
@@ -332,14 +326,12 @@ class TestOrderDetailView(TestCase):
         self.assertTemplateUsed(response, "orders/order_detail.html")
         self.assertEqual(response.context["order"], self.order1)
 
-    # @tag('x')
     def test_order_detail_view_logged_in_other_user_should_return_not_found_GET(self):
         self.client.force_login(self.other_user)
 
         response = self.client.get(self.order_detail_url)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
-    # @tag('x')
     def test_order_detail_view_not_logged_in_GET(self):
         response = self.client.get(self.order_detail_url)
 
@@ -359,7 +351,6 @@ class UpdateOrderStatusTests(TestCase):
             "orders:order-update-status", args=[self.order.id]
         )
 
-    # @tag('x')
     def test_order_update_status_view_logged_in_POST(self):
         self.client.force_login(self.account)
         new_status = Order.OrderShippingStatus.SHIPPED
@@ -373,7 +364,6 @@ class UpdateOrderStatusTests(TestCase):
             response, reverse(viewname="orders:order-details", args=[self.order.id])
         )
 
-    # @tag('x')
     def test_order_update_status_view_not_logged_in_POST(self):
         response = self.client.post(self.update_status_url)
 

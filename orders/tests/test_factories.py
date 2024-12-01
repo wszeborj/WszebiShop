@@ -1,4 +1,4 @@
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from shop.models import Product
 from users.models import Account
@@ -13,7 +13,6 @@ from ..models import Address, Order, OrderItem, ShippingType
 
 
 class AddressFactoryTest(TestCase):
-    @tag("z")
     def test_create_single_object(self):
         address = AddressFactory.create()
 
@@ -37,7 +36,6 @@ class AddressFactoryTest(TestCase):
 
 
 class ShippingTypeFactoryTest(TestCase):
-    # @tag('x')
     def test_create_single_object(self):
         shipping_type = ShippingTypeFactory.create()
 
@@ -52,7 +50,6 @@ class ShippingTypeFactoryTest(TestCase):
 
 
 class OrderFactoryTest(TestCase):
-    # @tag("x")
     def test_create_single_object(self):
         order = OrderFactory.create()
 

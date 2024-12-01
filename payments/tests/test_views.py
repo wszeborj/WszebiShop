@@ -7,7 +7,7 @@ from box import Box
 from django.conf import settings
 from django.core import mail
 from django.shortcuts import reverse
-from django.test import RequestFactory, TestCase, tag
+from django.test import RequestFactory, TestCase
 
 from orders.factories import AddressFactory, OrderFactory, ShippingTypeFactory
 from orders.models import Order
@@ -32,7 +32,6 @@ class TestWebhook(TestCase):
 
         self.factory = RequestFactory()
 
-    @tag("z")
     @patch("stripe.Webhook.construct_event")
     def test_valid_webhook_with_payment_intent_succeeded(self, mock_construct_event):
         event_data = {
@@ -60,7 +59,6 @@ class TestWebhook(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    # @tag("x")
     @patch("stripe.Webhook.construct_event")
     def test_webhook_with_invalid_payload(self, mock_construct_event):
         mock_construct_event.side_effect = ValueError("Invalid payload")
@@ -76,7 +74,6 @@ class TestWebhook(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
-    # @tag("x")
     @patch("stripe.Webhook.construct_event")
     def test_webhook_with_invalid_signature(self, mock_construct_event):
         mock_construct_event.side_effect = stripe.error.SignatureVerificationError(
@@ -107,7 +104,6 @@ class TestWebhook(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
-    # @tag("x")
     @patch("stripe.Webhook.construct_event")
     def test_stripe_webhook_invalid_signature(self, mock_construct_event):
         event_mock = MagicMock()
@@ -153,7 +149,6 @@ class TestWebhook(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, Order.OrderStatus.PAID)
 
-    # @tag("x")
     def test_proces_webhook_event_checkout_session_async_payment_succeeded_payment_status_paid(
         self,
     ):
@@ -173,7 +168,6 @@ class TestWebhook(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, Order.OrderStatus.PAID)
 
-    # @tag("x")
     def test_proces_webhook_event_checkout_session_async_payment_failed_payment_status_unpaid(
         self,
     ):
@@ -204,7 +198,6 @@ class TestWebhook(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "payments/payment_cancel.html")
 
-    # @tag("x")
     def test_process_webhook_event_with_payment_intent_succeeded(self):
         self.order = OrderFactory.create(
             id=65,

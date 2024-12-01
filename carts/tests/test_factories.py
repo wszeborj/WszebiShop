@@ -1,4 +1,4 @@
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from shop.models import Product
 
@@ -7,7 +7,6 @@ from ..models import CartItem
 
 
 class CartItemFactoryTest(TestCase):
-    @tag("z")
     def test_create_single_object(self):
         cart_item = CartItemFactory.create()
 

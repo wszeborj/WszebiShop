@@ -1,4 +1,4 @@
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from orders.models import Order
 from users.models import Account
@@ -8,7 +8,6 @@ from ..models import Payment
 
 
 class PaymentFactoryTest(TestCase):
-    @tag("z")
     def test_create_single_object(self):
         payment = PaymentFactory.create()
 

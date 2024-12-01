@@ -17,10 +17,10 @@
                         <div>
                             <a href="{{ item.get_absolute_url }}"
                                class="text-decoration-none text-reset">
-                                <h1 class="h5 pt-2">{{ item.id }}  ({{ item.created_at }})</h1>
+                                <h1 class="h5 pt-2">({{ item.id }}) ordered at {{ item.created_at }}</h1>
                             </a>
                             <p>
-                                <span class="h6 fw-bold">{{ item.buyer }} {{ item.address }} {{ item.shipping_type }} {{ item.total_price_with_shipping }}</span>
+                                <span class="h6 fw-bold">Status of order: {{ item.status }} {{ item.total_price_with_shipping }}</span>
                             </p>
 
                         </div>
