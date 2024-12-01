@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "Website where you can sell and buy products"
 authors = ["wszeborj <wszeborj@o2.pl>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"

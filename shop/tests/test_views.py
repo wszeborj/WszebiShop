@@ -3,8 +3,8 @@ from http import HTTPStatus
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.shortcuts import reverse
 from django.test import TestCase
-from icecream import ic
 
+# from icecream import ic
 from shop.models import Image, Product
 from users.factories import AccountFactory
 
@@ -181,16 +181,15 @@ class TestProductUpdateDeleteSearchView(TestCase):
         )
 
         self.updated_product_data["image"] = image_file
-        ic(self.updated_product_data["image"])
 
         response = self.client.post(
             path=self.product_update_url, data=self.updated_product_data, follow=True
         )
 
-        if response.context and "form" in response.context:
-            ic(response.context["form"].errors)
-        else:
-            ic("No error")
+        # if response.context and "form" in response.context:
+        #     ic(response.context["form"].errors)
+        # else:
+        #     ic("No error")
         self.product.refresh_from_db()
         # self.assertTemplateUsed(response, "shop/product-update.html")
         self.assertEquals(response.status_code, HTTPStatus.OK)
