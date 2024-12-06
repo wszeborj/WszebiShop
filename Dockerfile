@@ -1,7 +1,9 @@
 FROM python:3.10-alpine
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install poetry==1.8.4
+COPY poetry.lock pyproject.toml ./
+RUN poetry check
+RUN poetry install --no-interaction --no-cache --without dev
 COPY . .
-CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]

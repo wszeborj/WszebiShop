@@ -37,6 +37,7 @@ phonenumberslite = "^8.13.19"
 stripe = "^8.5.0"
 python-box = "^7.2.0"
 boto3 = "^1.35.66"
+poetry-plugin-export = "^1.8.0"
 
 
 [tool.poetry.dev-dependencies]
@@ -46,4 +47,4 @@ conventional-pre-commit = "2.3.0"
 isort = "5.12.0"
 bandit = "^1.8.0"
 ruff = "^0.8.1"
-safety = "^3.2.11"
+safety = "^3.2.1"
