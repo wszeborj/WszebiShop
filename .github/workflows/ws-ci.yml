@@ -63,6 +63,7 @@ jobs:
         SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         DJANGO_ADMIN_PASSWORD: ${{ secrets.DJANGO_ADMIN_PASSWORD }}
         ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        DOMAIN: ${{ vars.DOMAIN }}
     - name: Run Bandit
       run: |
         bandit -c bandit.yaml -r .
