@@ -1,7 +1,9 @@
 services:
   wszebishop:
     container_name: wszebishop
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - .:/app
     ports:

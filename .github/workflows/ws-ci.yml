@@ -62,7 +62,7 @@ jobs:
         EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         DJANGO_ADMIN_PASSWORD: ${{ secrets.DJANGO_ADMIN_PASSWORD }}
-      continue-on-error: true # TODO remove later
+        ENVIRONMENT: $ {{ vars.ENVIRONMENT }}
     - name: Run Bandit
       run: |
         bandit -c bandit.yaml -r .
