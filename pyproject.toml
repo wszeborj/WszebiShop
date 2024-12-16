@@ -13,7 +13,6 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.10"
 awsebcli = "3.21.0"
-crispy-bootstrap4 = "2022.1"
 Django = "4.2.4"
 django-bootstrap-datepicker-plus = "5.0.4"
 django-phonenumber-field = "^7.1.0"
@@ -38,6 +37,8 @@ stripe = "^8.5.0"
 python-box = "^7.2.0"
 boto3 = "^1.35.66"
 poetry-plugin-export = "^1.8.0"
+django-crispy-forms = "^2.3"
+crispy-bootstrap4 = "^2024.10"
 
 
 [tool.poetry.dev-dependencies]
@@ -48,3 +49,4 @@ isort = "5.12.0"
 bandit = "^1.8.0"
 ruff = "^0.8.1"
 safety = "^3.2.1"
+poetry-plugin-export = "^1.8.0"

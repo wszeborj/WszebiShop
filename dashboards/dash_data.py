@@ -34,7 +34,7 @@ class DashData:
 
     @staticmethod
     def get_combined_data_by_date():
-        df_daily_orders = DashData.get_daily_order_items()
+        df_daily_orders = DashData.get_daily_orders()
         df_daily_order_items = DashData.get_daily_order_items()
         df_daily_payments = DashData.get_daily_payments()
         if OrderItem.objects.count() > 0:
@@ -48,12 +48,21 @@ class DashData:
                 combined_df, df_daily_payments, on="created_at__date", how="outer"
             )
 
+            combined_df["avg_order_value"] = (
+                combined_df["total_payment"] / combined_df["order_count"]
+            )
+            combined_df["avg_quantity_per_order"] = (
+                combined_df["total_quantity"] / combined_df["order_count"]
+            )
+
             combined_df = combined_df.fillna(0)
             combined_df.columns = [
                 "created_at__date",
                 "order_count",
                 "total_quantity",
                 "total_payment",
+                "avg_order_value",
+                "avg_quantity_per_order",
             ]
 
             return combined_df
@@ -64,5 +73,7 @@ class DashData:
                 "order_count",
                 "total_quantity",
                 "total_payment",
+                "avg_order_value",
+                "avg_quantity_per_order",
             ]
         )

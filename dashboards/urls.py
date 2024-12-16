@@ -6,5 +6,5 @@ from .dash_apps import app  # noqa
 app_name = "dashboards"
 
 urlpatterns = [
-    path("", views.AdminDashboardListView.as_view(), name="admin-dashboard-list"),
+    path("", views.AdminDashboardListView.as_view(), name="dashboard-list"),
 ]
