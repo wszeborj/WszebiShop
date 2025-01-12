@@ -1,6 +1,6 @@
 import os
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.core.files import File
@@ -10,8 +10,10 @@ from faker import Faker
 
 from core.env import env
 from core.settings import MEDIA_ROOT
-from orders.models import ShippingType
+from orders.factories import OrderFactory, OrderItemFactory
+from orders.models import Order, OrderItem, ShippingType
 from shop.models import Category, Image, Product
+from users.factories import AccountFactory
 from users.models import Account
 
 
@@ -24,6 +26,7 @@ class Command(BaseCommand):
         self.create_batch_products()
         self.create_batch_images()
         self.create_batch_shipping_type()
+        self.create_batch_orders()
 
     def create_super_user(self):
         User = get_user_model()
@@ -61,7 +64,7 @@ class Command(BaseCommand):
     def create_batch_products(self):
         fake = Faker()
         products = []
-        for _ in range(10):
+        for _ in range(100):
             name = fake.name()[:50]
             description = fake.text()[:255]
             category = random.choice(Category.objects.all())
@@ -151,3 +154,61 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write(self.style.SUCCESS("Shipping types already created."))
+
+    def create_batch_orders(self):
+        categories = list(Category.objects.all())
+        shipping_types = list(ShippingType.objects.all())
+
+        if not categories:
+            raise ValueError("Brak istniejących kategorii w bazie danych.")
+        if not shipping_types:
+            raise ValueError("Brak istniejących sposobów wysyłki w bazie danych.")
+
+        NUM_USERS = 10
+        start = 10
+        stop = start + NUM_USERS
+
+        for i in range(start, stop):
+            user = AccountFactory(
+                username="test" + str(i), password="Test" + str(i) + ".Password"
+            )
+
+            random_num_orders = random.randint(1, 5)
+
+            for _ in range(random_num_orders):
+                random_days_ago = random.randint(1, 30)
+                created_at = datetime.now() - timedelta(days=random_days_ago)
+
+                shipping_type = random.choice(shipping_types)
+
+                order = OrderFactory(
+                    buyer=user,
+                    created_at=created_at,
+                    update_at=created_at + timedelta(hours=5),
+                    status=Order.OrderStatus.PAID,
+                    shipping_type=shipping_type,
+                )
+                Order.objects.filter(pk=order.pk).update(created_at=created_at)
+
+                random_num_items = random.randint(1, 10)
+
+                for _ in range(random_num_items):
+                    product = Product.objects.order_by("?").first()
+
+                    order_item = OrderItemFactory(
+                        order=order,
+                        account=user,
+                        product=product,
+                        quantity=random_num_items,
+                        created_at=created_at,
+                        update_at=created_at + timedelta(hours=5),
+                    )
+                    OrderItem.objects.filter(pk=order_item.pk).update(
+                        created_at=created_at
+                    )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Created {NUM_USERS} batch of random orders, item orders and users."
+            )
+        )
