@@ -25,8 +25,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-src/media
-src/carts/management/
+media
+carts/management/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
