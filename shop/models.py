@@ -87,10 +87,15 @@ class Product(models.Model):
             return None
 
     def get_thumbnail(self):
-        if self.images.filter(thumbnail=True):
-            return self.images.filter(thumbnail=True).first().image
-        else:
-            return None
+        images = getattr(self, "_prefetched_objects_cache", {}).get("images", None)
+        for image in images:
+            if image.thumbnail:
+                return image.image
+        return None
+        # if self.images.filter(thumbnail=True):
+        #     return self.images.filter(thumbnail=True).first().image
+        # else:
+        #     return None
 
 
 class Image(models.Model):

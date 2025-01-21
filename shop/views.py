@@ -2,7 +2,7 @@ import django_filters
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -24,9 +24,9 @@ class AllProductListView(ListView):
     context_object_name = "products"
     ordering = ["-created_at"]
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Product]:
         queryset = super().get_queryset()
-        queryset = queryset.filter(is_active=True)
+        queryset = queryset.filter(is_active=True).prefetch_related("images")
         return queryset
 
 

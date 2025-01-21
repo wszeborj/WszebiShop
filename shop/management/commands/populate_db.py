@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.core.files import File
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 from django.utils.text import slugify
 from faker import Faker
 
@@ -177,7 +178,7 @@ class Command(BaseCommand):
 
             for _ in range(random_num_orders):
                 random_days_ago = random.randint(1, 30)
-                created_at = datetime.now() - timedelta(days=random_days_ago)
+                created_at = timezone.now() - timedelta(days=random_days_ago)
 
                 shipping_type = random.choice(shipping_types)
 

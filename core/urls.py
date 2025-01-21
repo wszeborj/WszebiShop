@@ -29,5 +29,8 @@ urlpatterns = [
     path("dashboards/", include("dashboards.urls")),
     path("django_plotly_dash/", include("django_plotly_dash.urls")),
 ]
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

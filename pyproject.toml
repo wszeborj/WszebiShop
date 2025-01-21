@@ -39,6 +39,7 @@ boto3 = "^1.35.66"
 poetry-plugin-export = "^1.8.0"
 django-crispy-forms = "^2.3"
 crispy-bootstrap4 = "^2024.10"
+django-silk = "^5.3.2"
 
 
 [tool.poetry.dev-dependencies]

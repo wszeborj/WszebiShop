@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "storages",
+    "silk",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -67,6 +68,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_plotly_dash.middleware.BaseMiddleware",
+    "silk.middleware.SilkyMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
