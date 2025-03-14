@@ -56,6 +56,10 @@ Run application
 ```bash
 poetry run python manage.py runserver
 ```
+To create superuser and generate random products, random sipping_types, random orders
+```bash
+poetry run python manage.py populate_db
+```
 Run tests
 ```bash
 poetry run python manage.py test
@@ -77,11 +81,22 @@ poetry run python manage.py test
 
 ## Application View
 <ul>
-<li>main</li>
+<li>Main</li>
 <img src="https://github.com/user-attachments/assets/37ae69d1-c892-46bd-bc97-a3e28b477721" width="50%" height="50%"></img>
-<li>product view</li>
+<li>Product view</li>
 <img src="https://github.com/user-attachments/assets/9c9030cb-d28a-4345-a49a-dafe768af6fe" width="50%" height="50%"></img>
-<li>cart view</li>
+<li>Cart view</li>
 <img src="https://github.com/user-attachments/assets/f07ef83d-3609-487a-97f4-1526427fdc46" width="50%" height="50%"></img>
-<li>order confirmation view</li>
+<li>Order confirmation view</li>
 <img src="https://github.com/user-attachments/assets/02bf3fa5-cf5a-4d1a-8517-8ee5ee403eb1" width="50%" height="50%"></img>
+<li>Stripe integration</li>
+<img src="https://github.com/user-attachments/assets/7f8e3e6e-0060-4091-82f8-2484eac4df3d" width="50%" height="50%"></img>
+<li>List of sales</li>
+<img src="https://github.com/user-attachments/assets/d8cf0a25-6b92-4995-aac7-65518eabd00d" width="50%" height="50%"></img>
+<li>Managing Sales</li>
+<img src="https://github.com/user-attachments/assets/4c5e0a8d-1694-46d7-9462-399cbda4ebe8" width="50%" height="50%"></img>
+<li>List of orders</li>
+<img src="https://github.com/user-attachments/assets/5e74c9ce-b9b0-4e0d-8413-871405d81263" width="50%" height="50%"></img>
+<li>Dashboard integrated plotly</li>
+<img src="https://github.com/user-attachments/assets/403519d7-9fda-4db9-9a4e-dfe5618b1149" width="50%" height="50%"></img>
+</ul>

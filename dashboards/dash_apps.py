@@ -79,14 +79,17 @@ def create_order_item_report_layout():
             dcc.RadioItems(
                 id="order-item-radio-item",
                 options=[
-                    {"label": "Total Quantity", "value": "total_quantity"},
+                    {
+                        "label": "Total Quantity",
+                        "value": "total_quantity_order_items_in_day",
+                    },
                     {
                         "label": "Total Order Item Payment",
                         "value": "total_order_item_payment",
                     },
                     {"label": "Avg Order Item Value", "value": "avg_order_item_value"},
                 ],
-                value="total_quantity",
+                value="total_quantity_order_items_in_day",
             ),
             dcc.Graph(
                 id="order-item-graph",
