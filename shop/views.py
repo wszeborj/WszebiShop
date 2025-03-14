@@ -70,7 +70,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print(form.errors)
+        # print(form.errors)
         return super().form_invalid(form)
 
 
@@ -81,7 +81,7 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("shop:user-product-list")
 
     def form_invalid(self, form):
-        print(form.errors)
+        # print(form.errors)
         return super().form_invalid(form)
 
     def form_valid(self, form):
