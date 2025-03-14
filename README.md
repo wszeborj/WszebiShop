@@ -11,7 +11,7 @@
 <b>WszebiShop</b>. is an e-commerce platform designed to simplify the buying and selling of products.
 The application allow users profile management, product management including searching and filtering products,
 payment process integrated with Stripe, and order management.
-The project is built using modern tools and frameworks like Django, Django Framework, Plotly Dash
+The project is built using modern tools and frameworks like Django, Django Framework, Plotly Dash, Stripe, PostgreSQL
 ensuring scalability and high performance.
 </details>
 
