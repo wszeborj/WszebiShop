@@ -45,7 +45,7 @@ class DashData:
 
         order_items = (
             order_items.values("created_at__date")
-            .annotate(total_quantity=Sum("quantity"))
+            .annotate(total_quantity_order_items_in_day=Sum("quantity"))
             .order_by("created_at__date")
         )
         return pd.DataFrame(order_items)
@@ -129,13 +129,13 @@ class DashData:
             )
             combined_df["avg_order_item_value"] = (
                 combined_df["total_order_item_payment"].astype(float)
-                / combined_df["total_quantity"]
+                / combined_df["total_quantity_order_items_in_day"]
             )
 
             combined_df = combined_df.fillna(0)
             combined_df.columns = [
                 "created_at__date",
-                "total_quantity",
+                "total_quantity_order_items_in_day",
                 "total_order_item_payment",
                 "avg_order_item_value",
             ]
@@ -145,7 +145,7 @@ class DashData:
         return pd.DataFrame(
             columns=[
                 "created_at__date",
-                "total_quantity",
+                "total_quantity_order_items_in_day",
                 "total_order_item_payment",
                 "avg_order_item_value",
             ]

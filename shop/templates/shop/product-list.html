@@ -6,10 +6,6 @@
     <main class="pt-5">
         <div class="container">
             <h1 class="h5">Your All Products</h1>
-{#            <form method="get">#}
-{#            {{ filter.form.as_p }}#}
-{#            <button type="submit">Filter</button>#}
-{#            </form>#}
             {% for item in product %}
                 <div data-index="{{ item.id }}"
                      class="row mb-4 border product-item">
