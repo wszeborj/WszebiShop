@@ -22,13 +22,17 @@ ensuring scalability and high performance.
 <li>Bootstrap4</li>
 <li>PostgreSQL</li>
 <li>Plotly</li>
+<li>Pandas</li>
 <li>Stripe</li>
 <li>Requests</li>
 <li>Sentry</li>
 <li>unittest</li>
+<li>Factory boy</li>
 <li>Pre-commit</li>
 <li>Docker-Compose & Docker</li>
 <li>Poetry</li>
+<li>Silk</li>
+<li>Mailtrap</li>
 </ul>
 
 ## Setup
